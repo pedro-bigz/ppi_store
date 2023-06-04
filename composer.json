@@ -1,0 +1,29 @@
+{
+    "name": "ppi/store",
+    "description": "",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dev1",
+            "email": "dev@gmail.com",
+            "role": "Developer",
+            "homepage": "http://dev1.com"
+        }
+    ],
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Core\\": "core/"
+        },
+        "files": [
+            "app/Helpers/functions.php"
+        ]
+    },
+    "require": {
+        "php": "^8.0|^8.1"
+    }
+}
