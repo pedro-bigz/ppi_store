@@ -1,7 +1,7 @@
 <?php namespace Core\Routing;
 
-use Core\Runner;
 use Core\Request\Request;
+use Core\Application\Runner;
 
 class MiddlewareRunner extends Runner
 {
@@ -14,19 +14,26 @@ class MiddlewareRunner extends Runner
         $this->request = $request;
     }
 
-    public function config()
+    public function config(): self
     {
         $middlewares = $this->middlewares;
+
+        if (empty($middlewares)) {
+            return $this;
+        }
 
         $classname = array_shift($middlewares);
         $middleware = $this->getMiddlewareInstance($classname);
 
+        echo 'configMiddleware<br>';
         foreach ($middlewares as $classname) {
             $current = $this->getMiddlewareInstance($classname);
 
             $middleware->setNext($current);
             $middleware = $current;
         }
+
+        return $this;
     }
 
     public function run()

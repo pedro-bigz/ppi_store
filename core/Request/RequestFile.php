@@ -1,14 +1,14 @@
 <?php namespace Core\Request;
 
 use SplFileInfo;
-use App\Exceptions\FileException;
-use App\Exceptions\NoFileException;
-use App\Exceptions\IniSizeFileException;
-use App\Exceptions\PartialFileException;
-use App\Exceptions\FormSizeFileException;
-use App\Exceptions\NoTmpDirFileException;
-use App\Exceptions\ExtensionFileException;
-use App\Exceptions\CannotWriteFileException;
+use Core\Exceptions\FileException;
+use Core\Exceptions\NoFileException;
+use Core\Exceptions\IniSizeFileException;
+use Core\Exceptions\PartialFileException;
+use Core\Exceptions\FormSizeFileException;
+use Core\Exceptions\NoTmpDirFileException;
+use Core\Exceptions\ExtensionFileException;
+use Core\Exceptions\CannotWriteFileException;
 
 final class RequestFile extends SplFileInfo
 {

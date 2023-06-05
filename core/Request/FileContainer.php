@@ -1,12 +1,12 @@
-<?php
+<?php namespace Core\Request;
 
 class FileContainer extends ItemContainer
 {
     private const KEYS = ['error', 'name', 'size', 'tmp_name', 'type'];
 
-    public function __construct(array $parameters = [])
+    public function __construct(array $items = [])
     {
-        $this->init($parameters);
+        $this->init($items);
     }
 
     private function init($files)

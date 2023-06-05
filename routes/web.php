@@ -11,6 +11,10 @@ $routes = [
         'controller' => '',
         'middlewares' => []
     ],
+    'GET::/anuncios/:id' => [
+        'controller' => '',
+        'middlewares' => []
+    ],
     'GET::/anuncios/create' => [
         'controller' => '',
         'middlewares' => []
@@ -30,6 +34,12 @@ $routes = [
     'GET::/anuncios/delete' => [
         'controller' => '',
         'middlewares' => []
+    ],
+    'GET::/login' => [
+        'controller' => 'Auth\\LoginController::index',
+    ],
+    'GET::/register' => [
+        'controller' => 'RegisterController',
     ],
     'POST::/auth/login' => [
         'controller' => '',

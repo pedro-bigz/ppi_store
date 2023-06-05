@@ -4,15 +4,20 @@ use Countable;
 use Traversable;
 use ArrayIterator;
 use IteratorAggregate;
-use App\Exceptions\BadRequestException;
+use Core\Exceptions\BadRequestException;
 
-class ItemsBag implements IteratorAggregate, Countable
+class ItemContainer implements IteratorAggregate, Countable
 {
     protected $items;
 
     public function __construct(array $items = [])
     {
         $this->items = $items;
+    }
+
+    public static function create(array $items = [])
+    {
+        return new static($items);
     }
 
     public function getIterator(): Traversable

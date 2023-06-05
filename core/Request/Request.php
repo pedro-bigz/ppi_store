@@ -2,52 +2,23 @@
 
 class Request
 {
-    public const METHOD_HEAD = 'HEAD';
-    public const METHOD_GET = 'GET';
+    public const AJAX = 'XMLHttpRequest';
     public const METHOD_POST = 'POST';
+    public const METHOD_GET = 'GET';
+    public const METHOD_HEAD = 'HEAD';
     public const METHOD_PUT = 'PUT';
     public const METHOD_PATCH = 'PATCH';
     public const METHOD_DELETE = 'DELETE';
-    public const METHOD_PURGE = 'PURGE';
-    public const METHOD_OPTIONS = 'OPTIONS';
-    public const METHOD_TRACE = 'TRACE';
-    public const METHOD_CONNECT = 'CONNECT';
-
-    public $attributes;
 
     public $request;
-
     public $query;
-
     public $cookies;
-
-    protected $languages;
-
-    protected $charsets;
-
-    protected $encodings;
-
-    protected $acceptableContentTypes;
-
-    protected $pathInfo;
-
-    protected $requestUri;
-
-    protected $baseUrl;
-
-    protected $basePath;
-
-    protected $method;
-
-    protected $format;
-
     public $server;
-
     public $files;
-
     public $headers;
-
+    protected $method;
     protected $session;
+    protected $acceptableContentTypes;
 
     public function __construct(
         array $query = [],
@@ -56,23 +27,34 @@ class Request
         array $files = [],
         array $server = []
     ) {
-        $this->request = new ItemContainer($request);
-        $this->query = new ItemContainer($query);
-        $this->cookies = new ItemContainer($cookies);
-        $this->files = new FileContainer($files);
-        $this->server = new ServerContainer($server);
-        $this->headers = new ItemContainer($this->server->getHeaders());
-
-        $this->languages = null;
-        $this->charsets = null;
-        $this->encodings = null;
-        $this->acceptableContentTypes = null;
-        $this->pathInfo = null;
-        $this->requestUri = null;
-        $this->baseUrl = null;
-        $this->basePath = null;
         $this->method = null;
-        $this->format = null;
+        $this->acceptableContentTypes = null;
+        $this->request = ItemContainer::create($request);
+        $this->query = ItemContainer::create($query);
+        $this->cookies = ItemContainer::create($cookies);
+        $this->files = FileContainer::create($files);
+        $this->server = ServerContainer::create($server);
+        $this->headers = ItemContainer::create($this->server->getHeaders());
+    }
+
+    public static function getServerAdapterArray(array $server = [])
+    {
+        $defaultServer = [
+            'SERVER_NAME' => SERVER_HOST,
+            'SERVER_PORT' => SERVER_PORT,
+            'HTTP_HOST' => SERVER_HOST,
+            'HTTP_USER_AGENT' => APP_NAME,
+            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'HTTP_ACCEPT_LANGUAGE' => 'en-us,en;q=0.5',
+            'HTTP_ACCEPT_CHARSET' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+            'REMOTE_ADDR' => SERVER_ADDR,
+            'SCRIPT_NAME' => '',
+            'SCRIPT_FILENAME' => '',
+            'SERVER_PROTOCOL' => SERVER_PROTOCOL,
+            'REQUEST_TIME' => time(),
+            'REQUEST_TIME_FLOAT' => microtime(true),
+        ];
+        return array_replace($defaultServer, $server);
     }
 
     public static function create(
@@ -83,98 +65,74 @@ class Request
         array $files = [],
         array $server = [],
     ) {
-        $server = array_replace([
-            'SERVER_NAME' => 'localhost',
-            'SERVER_PORT' => 80,
-            'HTTP_HOST' => 'localhost',
-            'HTTP_USER_AGENT' => 'PPI_STORE',
-            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'HTTP_ACCEPT_LANGUAGE' => 'en-us,en;q=0.5',
-            'HTTP_ACCEPT_CHARSET' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-            'REMOTE_ADDR' => '127.0.0.1',
-            'SCRIPT_NAME' => '',
-            'SCRIPT_FILENAME' => '',
-            'SERVER_PROTOCOL' => 'HTTP/1.1',
-            'REQUEST_TIME' => time(),
-            'REQUEST_TIME_FLOAT' => microtime(true),
-        ], $server);
+        $method = strtoupper($method);
+        $urlParts = parse_url($uri);
+        $server = static::getServerAdapterArray($server);
 
-        $server['PATH_INFO'] = '';
-        $server['REQUEST_METHOD'] = strtoupper($method);
-
-        $components = parse_url($uri);
-        if (isset($components['host'])) {
-            $server['SERVER_NAME'] = $components['host'];
-            $server['HTTP_HOST'] = $components['host'];
+        if (isset($urlParts['host'])) {
+            $server['SERVER_NAME'] = $urlParts['host'];
+            $server['HTTP_HOST'] = $urlParts['host'];
         }
 
-        if (isset($components['scheme'])) {
-            if ('https' === $components['scheme']) {
-                $server['HTTPS'] = 'on';
-                $server['SERVER_PORT'] = 443;
-            } else {
-                unset($server['HTTPS']);
-                $server['SERVER_PORT'] = 80;
+        if (isset($urlParts['user'])) {
+            $server['PHP_AUTH_USER'] = $urlParts['user'];
+        }
+
+        if (isset($urlParts['pass'])) {
+            $server['PHP_AUTH_PW'] = $urlParts['pass'];
+        }
+
+        if (!isset($urlParts['path'])) {
+            $urlParts['path'] = '/';
+        }
+
+        if (in_array($method, [self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE])) {
+            if (!isset($server['CONTENT_TYPE'])) {
+                $server['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
             }
         }
-
-        if (isset($components['port'])) {
-            $server['SERVER_PORT'] = $components['port'];
-            $server['HTTP_HOST'] .= ':'.$components['port'];
-        }
-
-        if (isset($components['user'])) {
-            $server['PHP_AUTH_USER'] = $components['user'];
-        }
-
-        if (isset($components['pass'])) {
-            $server['PHP_AUTH_PW'] = $components['pass'];
-        }
-
-        if (!isset($components['path'])) {
-            $components['path'] = '/';
-        }
-
-        switch (strtoupper($method)) {
-            case 'POST':
-            case 'PUT':
-            case 'DELETE':
-                if (!isset($server['CONTENT_TYPE'])) {
-                    $server['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
-                }
-            case 'PATCH':
-                $request = $parameters;
-                $query = [];
-                break;
-            default:
-                $request = [];
-                $query = $parameters;
-                break;
+        if ($method == self::METHOD_PATCH) {
+            $request = $parameters;
+            $query = [];
+        } else {
+            $request = [];
+            $query = $parameters;
         }
 
         $queryString = '';
-        if (isset($components['query'])) {
-            parse_str(html_entity_decode($components['query']), $qs);
+        if (isset($urlParts['query'])) {
+            parse_str(html_entity_decode($urlParts['query']), $queryBuffer);
 
             if ($query) {
-                $query = array_replace($qs, $query);
+                $query = array_replace($queryBuffer, $query);
                 $queryString = http_build_query($query, '', '&');
             } else {
-                $query = $qs;
-                $queryString = $components['query'];
+                $query = $queryBuffer;
+                $queryString = $urlParts['query'];
             }
         } elseif ($query) {
             $queryString = http_build_query($query, '', '&');
         }
 
-        $server['REQUEST_URI'] = $components['path'].('' !== $queryString ? '?'.$queryString : '');
+        $requestUri = $urlParts['path'];
+        if (empty($queryString)) {
+            $requestUri .= '?'.$queryString;
+        }
+
+        $server['PATH_INFO'] = '';
+        $server['REQUEST_METHOD'] = $method;
+        $server['SERVER_PORT'] = SERVER_PORT;
+        $server['REQUEST_URI'] = $requestUri;
         $server['QUERY_STRING'] = $queryString;
+        $server['SECURE'] = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+
+        unset($server['HTTPS']);
 
         return new static($query, $request, $cookies, $files, $server);
     }
 
     public function ajax()
     {
-        return 'XMLHttpRequest' == $this->headers->get('X-Requested-With');
+        return $this->headers->get('X-Requested-With') == AJAX;
     }
 }

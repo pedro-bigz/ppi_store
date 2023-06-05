@@ -1,10 +1,13 @@
 <?php namespace Core\Application;
 
+use ReflectionClass;
+use Core\Exceptions\InexistentClass;
+
 abstract class Runner
 {
     abstract function run();
 
-    public function getInstance($classname)
+    public function getInstance(string $classname)
     {
         $initializedParams = $this->initializeParams(
             $this->getParams($this->validateClass($classname))
@@ -15,7 +18,7 @@ abstract class Runner
 
     public function initializeParams($params)
     {
-        return array_map(fn($param) => $this->validateClass($classname), $params);
+        return array_map(fn($param) => $this->initializeClass($param['type']), $params);
     }
 
     public function getParams(string $classname)
@@ -24,19 +27,31 @@ abstract class Runner
             $this->validateClass($classname)
         );
 
+        $contructor = $reflection->getConstructor();
+
+        if (is_null($contructor)) {
+            return [];
+        }
+
         $controllerParams = array_map(
             fn($param) => ['name' => $param, 'type' => $param->getClass()->name],
-            $reflection->getConstructor()->getParameters()
+            $contructor->getParameters()
         );
 
         return $controllerParams;
     }
 
-    public function validateClass($classname)
+    public function validateClass(string $classname)
     {
         if (!class_exists($classname)) {
             throw InexistentClass::create($classname);
         }
         return $classname;
+    }
+
+    public function initializeClass(string $classname)
+    {
+        $classname = $this->validateClass($classname);
+        return new $classname();
     }
 }

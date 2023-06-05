@@ -1,8 +1,8 @@
-<?php namespace App\Exceptions;
+<?php namespace Core\Exceptions;
 
-use Exception;
-
-class ExtensionFileException extends Exception {
+class ViewNotFound
+{
+    
     public static function create($message)
     {
         return new static(sprintf(array_shift($message), ...$message), 400);
@@ -10,6 +10,6 @@ class ExtensionFileException extends Exception {
 
     public function abort()
     {
-        die;
+        die($this->message);
     }
 }

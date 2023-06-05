@@ -1,6 +1,6 @@
 <?php namespace Core\Routing;
 
-use App\Exceptions\NotFoundError;
+use Core\Exceptions\NotFoundError;
 
 class Router
 {
@@ -30,15 +30,14 @@ class Router
     public function config(Route $route)
     {
         $config = new ConfigRoute($route);
+        $config->init();
     }
 
     private function resolve()
     {
         $route = $this->routes->get($this->request['method'], $this->request['uri']);
 
-        // var_dump($route);
-
-        if (!is_null($route)) {
+        if (is_null($route)) {
             throw NotFoundError::create();
         }
 

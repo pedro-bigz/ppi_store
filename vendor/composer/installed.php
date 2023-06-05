@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'ppi/store',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '302cbf2a670c8f6f1dc1532c74161b9ad4d72695',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'ppi/store' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '302cbf2a670c8f6f1dc1532c74161b9ad4d72695',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

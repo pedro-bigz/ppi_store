@@ -1,7 +1,8 @@
 <?php namespace Core\Request;
 
 use Exception;
-use Core\Errors\ErroPageRender;
+use Core\Debug\DebugBacktrace;
+use Core\Views\ErroPageRender;
 
 class RequestHandler
 {
@@ -15,7 +16,11 @@ class RequestHandler
         try {
             return $this->object->{ $this->method }();
         } catch (Exception $e) {
-            ErroPageRender::create($e)->render();
+            if (DEBUG === false) {
+                ErroPageRender::create($e)->render();
+            } else {
+                DebugBacktrace::create($e)->render();
+            }
         }
     }
 }

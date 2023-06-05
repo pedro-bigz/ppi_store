@@ -35,4 +35,19 @@ class Route
     {
         $this->controller = $this->route['controller'];
     }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    public function getMiddlewares()
+    {
+        return $this->middlewares;
+    }
+
+    public function getController()
+    {
+        return $this->controller;
+    }
 }
