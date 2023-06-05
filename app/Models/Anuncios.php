@@ -1,6 +1,6 @@
 <?php namespace App\Models;
 
-use Core\Model\Model;
+use Core\Database\Model;
 
 class Anuncios extends Model
 {
