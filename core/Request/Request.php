@@ -60,6 +60,7 @@ class Request
     public static function create(
         string $uri,
         string $method = 'GET',
+        array $request = [],
         array $parameters = [],
         array $cookies = [],
         array $files = [],
@@ -133,6 +134,7 @@ class Request
 
     public function ajax()
     {
-        return $this->headers->get('X-Requested-With') == AJAX;
+        dd($this->server);
+        // return $this->headers->get('X-Requested-With') == AJAX;
     }
 }

@@ -2,8 +2,9 @@
 
 use Core\Request\Request;
 use Core\Application\Runner;
+use Core\Application\RunnerInterface;
 
-class MiddlewareRunner extends Runner
+class MiddlewareRunner extends Runner implements RunnerInterface
 {
     private $middlewares;
     private $request;
@@ -14,7 +15,7 @@ class MiddlewareRunner extends Runner
         $this->request = $request;
     }
 
-    public function config(): self
+    public function config(): RunnerInterface
     {
         $middlewares = $this->middlewares;
 
@@ -25,7 +26,6 @@ class MiddlewareRunner extends Runner
         $classname = array_shift($middlewares);
         $middleware = $this->getMiddlewareInstance($classname);
 
-        echo 'configMiddleware<br>';
         foreach ($middlewares as $classname) {
             $current = $this->getMiddlewareInstance($classname);
 

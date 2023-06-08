@@ -14,6 +14,7 @@ class Routes
 
     public function get(string $method, string $uri)
     {
+        [$uri, $query] = explode('?', $uri);
         $key = $method . '::' . $uri;
         $parts = explode('/', $key);
         $paths = array_keys($this->routes);

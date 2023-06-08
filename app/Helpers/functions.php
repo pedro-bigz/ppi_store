@@ -1,18 +1,27 @@
 <?php
 
-// if (!method_exists()) {
-//     function cleanUrl()
-//     {
-//         //Eliminar as tags
-//         $this->Url = strip_tags($this->Url);
-//         //Eliminar espaços em branco
-//         $this->Url = trim($this->Url);
-//         //Eliminar a barra no final da URL
-//         $this->Url = rtrim($this->Url, "/");
+if (! function_exists('snakeCase')) {
+    function snakeCase($input)
+    {
+        $pattern = '/(?<!^)[A-Z]/';
+        $snakeCase = preg_replace($pattern, '_$0', $input);
+    
+        return strtolower($snakeCase);
+    }
+    
+}
 
-//         self::$Format = array();
-//         self::$Format['a'] = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr"!@#$%&*()_-+={[}]?;:.,\\\'<>°ºª ';
-//         self::$Format['b'] = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr--------------------------------';
-//         $this->Url = strtr(utf8_decode($this->Url), utf8_decode(self::$Format['a']), self::$Format['b']);
-//     }
-// }
+if (! function_exists('strRandom')) {
+    function strRandom($length = 16)
+    {
+        $string = '';
+
+        while (($len = strlen($string)) < $length) {
+            $size = $length - $len;
+            $bytes = random_bytes($size);
+            $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+        }
+
+        return $string;
+    }
+}

@@ -1,5 +1,7 @@
 <?php namespace Core\Database;
 
+use Core\Exceptions\ConnectionNotFound;
+
 final class ConnectionFactory implements ConnectionFactoryInterface
 {
     protected static $instance;
@@ -14,7 +16,7 @@ final class ConnectionFactory implements ConnectionFactoryInterface
         }
     }
 
-    public function instance(array $connections = [])
+    public static function singleton(array $connections = [])
     {
         if (self::$instance == null) {
             self::$instance = new self($connections);
@@ -22,7 +24,7 @@ final class ConnectionFactory implements ConnectionFactoryInterface
         return self::$instance;
     }
 
-    public function connection(string $name = null)
+    public function connection(string|null $name = null)
     {
         if (is_null($name)) {
             $name = $this->default;
@@ -39,10 +41,10 @@ final class ConnectionFactory implements ConnectionFactoryInterface
         $connections = DB_CONNECTIONS;
 
         if (!array_key_exists($name, $connections)) {
-            throw ConnectionNotFound::create();
+            throw ConnectionNotFound::create("Conexão não encontrada (%s)", $name);
         }
 
-        return $connection[$name];
+        return $connections[$name];
     }
 
     public function makeConnection(string $name)

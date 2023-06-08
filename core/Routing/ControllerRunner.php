@@ -3,10 +3,13 @@
 use ReflectionMethod;
 use Core\Request\Request;
 use Core\Application\Runner;
+use Core\Application\RunnerInterface;
+use Core\Routing\ControllerParamLinker;
 
-class ControllerRunner extends Runner
+class ControllerRunner extends Runner implements RunnerInterface
 {
     private $controller;
+    private $method;
     private $params;
     private $request;
     private $traceInfo;
@@ -18,10 +21,11 @@ class ControllerRunner extends Runner
         $this->params = $params;
     }
 
-    public function config()
+    public function config(): RunnerInterface
     {
         $this->setTraceInfo();
 
+        $this->method = $this->traceInfo['methodname'];
         $this->controller = $this->getControllerInstance(
             $this->traceInfo['classname']
         );
@@ -30,14 +34,12 @@ class ControllerRunner extends Runner
             $this->getControllerMethodDependencys()
         );
 
-        var_dump($this->params);
-
         return $this;
     }
 
     public function run()
     {
-        
+        $this->controller->{ $this->method }(...$this->params);
     }
 
     public function setTraceInfo()
@@ -65,7 +67,13 @@ class ControllerRunner extends Runner
         );
 
         $controllerParams = array_map(
-            fn($param) => ['name' => $param, 'type' => $param->getType()->__toString(), 'class' => $param->getClass()],
+            fn($param) => [
+                'param' => $param,
+                'name' => $param->name,
+                'position' => $param->getPosition(),
+                'type' => $param->getType()->__toString(),
+                'class' => $param->getClass()
+            ],
             $reflection->getParameters()
         );
         
@@ -75,7 +83,9 @@ class ControllerRunner extends Runner
     public function injectMethodDependencys(array $dependencys = [])
     {
         return array_map(function($dependency) {
-            return ControllerParamLinker::resolve($dependency, $this->params);
+            return ControllerParamLinker::resolve(
+                $dependency, $this->params, $this->request
+            );
         }, $dependencys);
     }
 }

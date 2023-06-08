@@ -12,17 +12,18 @@ class ConfigRoute
 
     public function __construct(Route $route)
     {
-        // var_dump($route);
         $this->route = $route;
     }
 
-    public function init(): void
+    public function init(): RouteAction
     {
         $this->route->init();
 
         $this->request = $this->extractRequest();
         $this->middlewareRunner = $this->initMiddleware()->config();
         $this->controllerRunner = $this->initController()->config();
+
+        return $this->newRouteAction();
     }
 
     public function extractRequest(): Request
@@ -38,5 +39,10 @@ class ConfigRoute
     public function initController(): ControllerRunner
     {
         return new ControllerRunner($this->route->getController(), $this->route->getParams(), $this->request);        
+    }
+
+    public function newRouteAction()
+    {
+        return new RouteAction($this->route, $this->middlewareRunner, $this->controllerRunner, $this->request);
     }
 }

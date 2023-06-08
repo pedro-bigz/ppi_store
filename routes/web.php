@@ -11,8 +11,8 @@ $routes = [
         'controller' => '',
         'middlewares' => []
     ],
-    'GET::/anuncios/:id' => [
-        'controller' => '',
+    'GET::/anuncios/:anuncio' => [
+        'controller' => 'AnuncioController::show',
         'middlewares' => []
     ],
     'GET::/anuncios/create' => [

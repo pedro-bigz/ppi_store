@@ -2,8 +2,8 @@
 
 interface ConnectionFactoryInterface
 {
-    public function connection($name = null);
+    public function connection(string|null $name = null);
     public function getDefaultConnection();
-    public function setDefaultConnection($name);
+    public function setDefaultConnection(string $name);
     public function addConnection(string $name, ConnectionInterface $connection);
 }

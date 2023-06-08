@@ -1,7 +1,13 @@
 <?php namespace Core\Database;
 
-use Core\Query\Builder;
-use Core\Database\ConnectionResolver;
+use Error;
+use Closure;
+use Core\DateTime\Moment;
+use BadMethodCallException;
+use Core\Collections\Collection;
+use Core\Database\Query\QueryBuilder;
+use Core\Database\Query\BuilderBridge;
+use Core\Exceptions\NotFoundException;
 
 abstract class Model
 {
@@ -10,10 +16,17 @@ abstract class Model
     protected string $primaryKeyType = 'int';
     protected string $connection = 'mysql';
 
+    public bool $timestamps = true;
+    public bool $isLoaded = false;
+
+    public string $created_at_column = 'created_at';
+    public string $updated_at_column = 'updated_at';
+
     protected array $fillable = [];
     protected array $dates = [];
     protected array $with = [];
 
+    protected array $attributes;
 
     public static function all($columns = ['*'])
     {
@@ -21,17 +34,6 @@ abstract class Model
             is_array($columns) ? $columns : func_get_args()
         );
     }
-
-    // public function load($relations)
-    // {
-    //     $query = $this->newQueryWithoutRelationships()->with(
-    //         is_string($relations) ? func_get_args() : $relations
-    //     );
-
-    //     $query->eagerLoadRelations([$this]);
-
-    //     return $this;
-    // }
 
     public static function create()
     {
@@ -45,7 +47,7 @@ abstract class Model
 
     public function newQuery()
     {
-        return $this->newModelQuery()->with($this->with);
+        return $this->newModelQuery();//->with($this->with);
     }
 
     public function newModelQuery()
@@ -53,7 +55,7 @@ abstract class Model
         return $this->newBuilderBridgeInstance($this->newQueryBuilderInstance())->setModel($this);
     }
 
-    public function newBuilderBridgeInstance(Builder $query)
+    public function newBuilderBridgeInstance(QueryBuilder $query)
     {
         return new BuilderBridge($query);
     }
@@ -63,14 +65,43 @@ abstract class Model
         return $this->getConnection()->query();
     }
 
+    public function setConnection($name)
+    {
+        $this->connection = $name;
+
+        return $this;
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    public function setExists($exists)
+    {
+        $this->exists = $exists;
+
+        return $this;
+    }
+
+    public function newInstance(array $attributes = [], $exists = false)
+    {
+        return static::create($attributes)
+                ->setExists($exists)
+                ->setConnection($this->getConnectionName())
+                ->setTable($this->getTable());
+    }
+
     public function getConnection()
     {
         return static::resolveConnection($this->getConnectionName());
     }
 
-    public function getConnectionResolver()
+    public static function newConnection()
     {
-        return ConnectionFactory::instance();
+        return ConnectionFactory::singleton();
     }
 
     public function getConnectionName()
@@ -80,6 +111,133 @@ abstract class Model
 
     public static function resolveConnection($connection = null)
     {
-        return static::getConnectionResolver()->connection($connection);
+        return static::newConnection()->connection($connection);
+    }
+
+    public function newCollection(array|object $data = [])
+    {
+        return new Collection($models);
+    }
+
+    public function getFullKeyName()
+    {
+        return $this->getColumnFullName($this->getKeyName());
+    }
+
+    public function setLoaded($loaded)
+    {
+        $this->isLoaded = $loaded;
+        return $this;
+    }
+
+    public function configLoaded()
+    {
+        return $this->setLoaded(true);
+    }
+
+    public function setAttributes(array|object $attributes)
+    {
+        $this->attributes = $attributes;
+        return $this->configLoaded();
+    }
+
+    public function getTable()
+    {
+        return $this->table;// ?? snakeCase(class_basename($this));
+    }
+
+    public function getKeyName()
+    {
+        return $this->primaryKey;
+    }
+
+    public function getColumnFullName($column)
+    {
+        if (str_contains($column, '.')) {
+            return $column;
+        }
+
+        return $this->getTable().'.'.$column;
+    }
+
+    public function getFillable()
+    {
+        return $this->fillable;
+    }
+
+    public function usesTimestamps()
+    {
+        return $this->timestamps;
+    }
+
+    public function getCreatedAtColumn()
+    {
+        return $this->created_at_column;
+    }
+
+    public function getUpdatedAtColumn()
+    {
+        return $this->updated_at_column;
+    }
+
+    public function setCreatedAtColumn($column)
+    {
+        $this->created_at_column = $column;
+    }
+
+    public function setUpdatedAtColumn($column)
+    {
+        $this->updated_at_column = $column;
+    }
+
+    public function setCreatedAt($value)
+    {
+        $this->{$this->getCreatedAtColumn()} = $value;
+
+        return $this;
+    }
+
+    public function setUpdatedAt($value)
+    {
+        $this->{$this->getUpdatedAtColumn()} = $value;
+
+        return $this;
+    }
+
+    public function transact(Closure $callback)
+    {
+        BuilderBridge::transaction($this->getConnection(), $callback);
+    }
+
+    public function __get($key)
+    {
+        if (! $key) {
+            return;
+        }
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->getAttributeValue($key);
+        }
+        if (array_key_exists($key, $this->relations)) {
+            return $this->getRelationValue($key);
+        }
+    }
+
+    public function __call($method, $parameters)
+    {
+        try {
+            return $this->newQuery()->{ $method }(...$parameters);
+        } catch (NotFoundException $e) {
+            dd($e->getMessage());
+            throw $e;
+        } catch (Error|BadMethodCallException $e) {
+            throw new BadMethodCallException(sprintf(
+                'Call to undefined method %s::%s()', static::class, $method
+            ));
+        }
+    }
+
+    public static function __callStatic($method, $parameters)
+    {
+        return static::create()->{ $method }(...$parameters);
     }
 }
