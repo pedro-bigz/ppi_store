@@ -7,10 +7,13 @@ ob_start();
 
 define("DEBUG", true);
 
-define("CONTROLLERS_PATH", "App\\Controllers");
-define("VIEW_PATH", __DIR__."/../resources/views");
-define("ERROR_VIEW_PATH", __DIR__."/../resources/errors");
-define("ROOT_PATH", __DIR__."/..");
+define("ROOT_PATH", "/var/www/ufu/PPI_STORE");
+
+define("CONTROLLERS_NAMESPACE", "App\\Controllers");
+define("MODELS_NAMESPACE", "App\\Models");
+
+define("VIEW_PATH", ROOT_PATH."/resources/views");
+define("ERROR_VIEW_PATH", ROOT_PATH."/resources/errors");
 
 define("APP_NAME", "PPI_STORE");
 define("SERVER_HOST", "localhost");

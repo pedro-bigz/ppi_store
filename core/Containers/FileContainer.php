@@ -1,4 +1,4 @@
-<?php namespace Core\Request;
+<?php namespace Core\Containers;
 
 class FileContainer extends ItemContainer
 {

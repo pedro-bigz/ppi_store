@@ -4,9 +4,31 @@ use Symfony\Component\VarDumper\VarDumper;
 use Core\Views\View;
 
 if (! function_exists('view')) {
-    function view(string $name, array|null $data)
+    function view(string $name, array|null $data = [])
     {
         return View::render($name, $data);
+    }
+}
+
+if (! function_exists('_')) {
+    function _(string $text)
+    {
+        echo htmlspecialchars($text);
+    }
+}
+
+if (! function_exists('hash')) {
+    function hash($password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+}
+
+if (! function_exists('response')) {
+    function response($response, int|null $code = 200)
+    {
+        http_response_code($code);
+        return json_encode($response);
     }
 }
 
@@ -14,6 +36,20 @@ if (! function_exists('factory')) {
     function factory(string $classname)
     {
         return new $classname;
+    }
+}
+
+if (! function_exists('url')) {
+    function url(string $uri = '')
+    {
+        return "https://{$_SERVER['HTTP_HOST']}{$uri}";
+    }
+}
+
+if (! function_exists('currentUrl')) {
+    function currentUrl()
+    {
+        return url($_SERVER['REQUEST_URI']);
     }
 }
 
@@ -37,10 +73,6 @@ if (!function_exists('dump')) {
 if (!function_exists('dd')) {
     function dd(...$vars)
     {
-        if (!in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && !headers_sent()) {
-            header('HTTP/1.1 500 Internal Server Error');
-        }
-
         foreach ($vars as $v) {
             VarDumper::dump($v);
         }

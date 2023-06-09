@@ -2,6 +2,7 @@
 
 use Error;
 use Closure;
+use DateTime;
 use Core\DateTime\Moment;
 use BadMethodCallException;
 use Core\Collections\Collection;
@@ -135,7 +136,7 @@ abstract class Model
         return $this->setLoaded(true);
     }
 
-    public function setAttributes(array|object $attributes)
+    public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
         return $this->configLoaded();
@@ -204,22 +205,26 @@ abstract class Model
         return $this;
     }
 
-    public function transact(Closure $callback)
+    public function getAttributeValue($key)
     {
-        BuilderBridge::transaction($this->getConnection(), $callback);
+        return in_array($key, $this->dates) ?
+            Moment::create($this->attributes[$key]) : $this->attributes[$key];
     }
 
     public function __get($key)
     {
         if (! $key) {
-            return;
+            return null;
+        }
+        if (!in_array($key, [ 'id', ...$this->fillable, ...$this->dates ])) {
+            return null;
         }
         if (array_key_exists($key, $this->attributes)) {
             return $this->getAttributeValue($key);
         }
-        if (array_key_exists($key, $this->relations)) {
-            return $this->getRelationValue($key);
-        }
+        // if (array_key_exists($key, $this->relations)) {
+        //     return $this->getRelationValue($key);
+        // }
     }
 
     public function __call($method, $parameters)
@@ -227,7 +232,6 @@ abstract class Model
         try {
             return $this->newQuery()->{ $method }(...$parameters);
         } catch (NotFoundException $e) {
-            dd($e->getMessage());
             throw $e;
         } catch (Error|BadMethodCallException $e) {
             throw new BadMethodCallException(sprintf(
@@ -239,5 +243,10 @@ abstract class Model
     public static function __callStatic($method, $parameters)
     {
         return static::create()->{ $method }(...$parameters);
+    }
+
+    public function transact(Closure $callback)
+    {
+        BuilderBridge::transaction($this->getConnection(), $callback);
     }
 }

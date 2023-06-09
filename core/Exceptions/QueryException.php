@@ -10,13 +10,13 @@ class QueryException extends PDOException
     {
         parent::__construct('', $previous->getCode(), $previous);
 
-        $this->sql = $sql;
-        $this->bindings = $bindings;
-        $this->message = $this->formatMessage($sql, $bindings, $previous);
-
         if ($previous instanceof PDOException) {
             $this->errorInfo = $previous->errorInfo;
         }
+
+        $this->sql = $sql;
+        $this->bindings = $bindings;
+        $this->message = $this->formatMessage($sql, $bindings, $previous);
     }
 
     public function isCausedByLostConnection()
@@ -64,5 +64,10 @@ class QueryException extends PDOException
         ];
 
         return in_array($this->getPrevious()->getMessage(), $messages);
+    }
+
+    public function abort()
+    {
+        die($this->message);
     }
 }

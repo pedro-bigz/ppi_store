@@ -5,7 +5,7 @@ use Core\DateTime\Moment;
 
 trait PrepareStatements
 {
-    protected $fetchMode = PDO::FETCH_OBJ;
+    protected $fetchMode = PDO::FETCH_ASSOC;
 
     protected function prepared($query)
     {

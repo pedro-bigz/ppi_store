@@ -31,6 +31,9 @@ class ControllerParamLinker
             if (! is_object($linker->dependency['class'])) {
                 throw new InvalidArgumentException("Invalid Parameter ".$linker->dependency['type']);
             }
+            if ($linker->instanceOf(Request::class)) {
+                return Request::make($linker->dependency['type']);
+            }
             // Se for objeto retorna uma instancia dele.
             return $linker->newDependencyInstance();
         }

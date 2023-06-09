@@ -37,7 +37,8 @@ class BuilderBridge
         return $this->select(
             columns:    $columns,
             where:      "{$this->model->getFullKeyName()} = :id",
-            bindings:   compact("id")
+            bindings:   compact("id"),
+            first:      true,
         );
     }
 
@@ -50,7 +51,8 @@ class BuilderBridge
         string|null $groups = null,
         string|null $order = null,
         string|null $having = null,
-        array $bindings = []
+        array $bindings = [],
+        bool $first = false,
     ) {
         $select = implode(', ', $columns);
 
@@ -79,7 +81,7 @@ class BuilderBridge
         return $this->selectRaw(<<<SQL
             SELECT {$select} FROM {$this->model->getTable()} {$joins}
             {$where} {$limit} {$offset} {$groups} {$order} {$having}
-        SQL, $bindings);
+        SQL, $bindings, $first);
     }
 
     public function inserts(array $items = [])
@@ -162,16 +164,38 @@ class BuilderBridge
         SQL, $bindings);
     }
 
-    public function validateSelect($data)
+    public function bindToLog($query, $bindings)
     {
-        NotFoundException::throwNotFoundExceptionIf($data == [], 'Não encontrado');
+        foreach ($bindings as $binding => $value) {
+            $query = str_replace(':'.$binding, $value, $query);
+        }
+
+        return $query;
+    }
+
+    public function getDate($data, $first = false)
+    {
+        if (! $first) {
+            return $data;
+        }
+        return current($data);
+    }
+
+    public function validateSelect($data, $query, $bindings)
+    {
+        if (empty($data)) {
+            throw NotFoundException::create(
+                "Item não encontrado! (SQL: {$this->bindToLog($query, $bindings)})"
+            );
+        }
+        
         return $data;
     }
 
-    public function selectRaw(string $query, array $bindings = [])
+    public function selectRaw(string $query, array $bindings = [], bool $first = false)
     {
         return $this->model->setAttributes($this->validateSelect(
-            $this->query->select($query, $bindings)
+            $this->getDate($this->query->select($query, $bindings), $first), $query, $bindings
         ));
     }
 

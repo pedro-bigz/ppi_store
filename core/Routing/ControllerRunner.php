@@ -39,14 +39,14 @@ class ControllerRunner extends Runner implements RunnerInterface
 
     public function run()
     {
-        $this->controller->{ $this->method }(...$this->params);
+        echo $this->controller->{ $this->method }(...$this->params);
     }
 
     public function setTraceInfo()
     {
         [$controller, $method] = explode('::', $this->controller);
 
-        $classname = CONTROLLERS_PATH . '\\' . $controller;
+        $classname = CONTROLLERS_NAMESPACE . '\\' . $controller;
 
         $this->traceInfo = [
             'classname' => $classname,

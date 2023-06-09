@@ -1,8 +1,6 @@
 <?php namespace Core\Exceptions;
 
-use Exception;
-
-class NotFoundException extends Exception
+class NotFoundException extends CustomException
 {
     public static function create($message = 'Página não encontrada')
     {
@@ -12,7 +10,7 @@ class NotFoundException extends Exception
     public static function throwNotFoundExceptionIf($condition, $message)
     {
         if ((bool) $condition) {
-            static::create($message);
+            throw static::create($message);
         }
     }
 }

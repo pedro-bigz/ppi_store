@@ -1,8 +1,6 @@
 <?php namespace Core\Exceptions;
 
-use Exception;
-
-class InexistentClass extends Exception
+class InexistentClass extends CustomException
 {
     public static function create($classname)
     {

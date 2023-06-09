@@ -44,6 +44,6 @@ class View
     public function renderPage()
     {
         extract($this->data);
-        include $this->page;
+        include ViewPath::resolver('layout.master');
     }
 }

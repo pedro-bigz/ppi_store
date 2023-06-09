@@ -20,7 +20,8 @@ class AnuncioController extends Controller
 
     public function show(Anuncios $anuncio)
     {
-        echo '---';
-        dd($anuncio);
+        view('anuncios.index', [
+            'title' => "Anuncio - {$anuncio->titulo}",
+        ]);
     }
 }

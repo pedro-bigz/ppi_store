@@ -1,5 +1,9 @@
 <?php namespace Core\Request;
 
+use Core\Containers\FileContainer;
+use Core\Containers\ItemContainer;
+use Core\Containers\ServerContainer;
+
 class Request
 {
     public const AJAX = 'XMLHttpRequest';
@@ -21,13 +25,14 @@ class Request
     protected $acceptableContentTypes;
 
     public function __construct(
+        string $method = 'GET',
         array $query = [],
         array $request = [],
         array $cookies = [],
         array $files = [],
         array $server = []
     ) {
-        $this->method = null;
+        $this->method = $method;
         $this->acceptableContentTypes = null;
         $this->request = ItemContainer::create($request);
         $this->query = ItemContainer::create($query);
@@ -55,6 +60,27 @@ class Request
             'REQUEST_TIME_FLOAT' => microtime(true),
         ];
         return array_replace($defaultServer, $server);
+    }
+
+    public static function getJsonFromRequest()
+    {
+        return json_decode(file_get_contents('php://input') ?: '[]', true);
+    }
+
+    public static function make(string $classname)
+    {
+        if (!(factory($classname) instanceof self)) {
+            throw new InvalidArgumentException("A classe {$classname} não é subclasse de Request");
+        }
+
+        return $classname::create(
+            uri: $_SERVER['REQUEST_URI'],
+            method: $_SERVER['REQUEST_METHOD'],
+            request: array_merge($_REQUEST, self::getJsonFromRequest()),
+            cookies: $_COOKIE,
+            files: $_FILES,
+            server: $_SERVER,
+        );
     }
 
     public static function create(
@@ -93,10 +119,8 @@ class Request
             }
         }
         if ($method == self::METHOD_PATCH) {
-            $request = $parameters;
             $query = [];
         } else {
-            $request = [];
             $query = $parameters;
         }
 
@@ -129,12 +153,41 @@ class Request
 
         unset($server['HTTPS']);
 
-        return new static($query, $request, $cookies, $files, $server);
+        return new static($method, $query, $request, $cookies, $files, $server);
     }
 
     public function ajax()
     {
-        dd($this->server);
-        // return $this->headers->get('X-Requested-With') == AJAX;
+        return $this->headers->get('X_REQUESTED_WITH') == self::AJAX;
+    }
+
+    public function input(string|null $key = null, string|null $default)
+    {
+        return is_null($key) ? $this->all() : $this->get($key, $default);
+    }
+
+    public function all()
+    {
+        return $this->request->getAll();
+    }
+
+    public function get(string $key, string|null $default = null)
+    {
+        return $this->request->get($key) ?: $default;
+    }
+
+    public function has(string $key)
+    {
+        return $this->request->has($key);
+    }
+
+    public function headers(string $key)
+    {
+        return $this->headers->get($key);
+    }
+
+    public function __get(string $key)
+    {
+        return $this->get($key);
     }
 }

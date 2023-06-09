@@ -1,8 +1,8 @@
-<?php
+<?php namespace Core\Request\Contracts;
 
 interface FormRequestInterface
 {
-    function authorize();
-    function rules();
-    function getSanitized();
+    public function authorize();
+    public function rules();
+    public function getSanitized();
 }

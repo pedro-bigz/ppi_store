@@ -1,16 +1,9 @@
 <?php namespace Core\Exceptions;
 
-use Exception;
-
-class FormSizeFileException extends Exception
+class FormSizeFileException extends CustomException
 {
     public static function create($message)
     {
         return new static(sprintf(array_shift($message), ...$message), 400);
-    }
-
-    public function abort()
-    {
-        die($this->message);
     }
 }

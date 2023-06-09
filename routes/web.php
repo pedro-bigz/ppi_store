@@ -36,19 +36,19 @@ $routes = [
         'middlewares' => []
     ],
     'GET::/login' => [
-        'controller' => 'Auth\\LoginController::index',
+        'controller' => 'Auth\\AuthController::index',
     ],
     'GET::/register' => [
         'controller' => 'RegisterController',
     ],
     'POST::/auth/login' => [
-        'controller' => '',
+        'controller' => 'Auth\\AuthController::login',
     ],
     'POST::/auth/regiter' => [
-        'controller' => '',
+        'controller' => 'Auth\\AuthController::register',
     ],
-    'POST::/auth/logout' => [
-        'controller' => '',
+    'DELETE::/auth/logout' => [
+        'controller' => 'Auth\\AuthController::delete',
         'middlewares' => []
     ],
 ];

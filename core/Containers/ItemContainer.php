@@ -1,4 +1,4 @@
-<?php namespace Core\Request;
+<?php namespace Core\Containers;
 
 use Countable;
 use Traversable;
@@ -43,6 +43,11 @@ class ItemContainer implements IteratorAggregate, Countable
         }
 
         return $this->items;
+    }
+
+    public function has($key)
+    {
+        return array_keys_exists($key, $this->items);
     }
 
     public function keys()
