@@ -1,6 +1,6 @@
 <?php namespace Core\Request;
 
-use Core\Exceptions\CustomException;
+use Core\Exceptions\ApplicationException;
 use Core\Exceptions\RequiredException;
 use Core\Exceptions\InvalidTypeException;
 use Core\Exceptions\InvalidValueException;
@@ -52,14 +52,10 @@ class FormRequest extends Request
 
     public function validateResolved()
     {
-        try {
-            if (! $this->getAuthorization()) {
-                throw AuthorizationException::create();
-            }
-            return $this->validated = $this->validate();
-        } catch (CustomException $e) {
-            $e->abort();
+        if (! $this->getAuthorization()) {
+            throw AuthorizationException::create();
         }
+        return $this->validated = $this->validate();
     }
 
     public function validate()
@@ -131,7 +127,7 @@ class FormRequest extends Request
             return true;
         }
 
-        return $validator();
+        return is_null($input) || $validator();
     }
 
     public function resolveSanitize($input, string $type, array $options = [])
@@ -140,6 +136,7 @@ class FormRequest extends Request
 
         $validators = [
             self::BOOL_T =>  fn() => !empty($input),
+            self::STRING_T => fn() => htmlspecialchars(trim($input)),
             self::EMAIL_T => fn() => (
                 $this->sanitizeInput(trim($input), FILTER_SANITIZE_EMAIL, $options)
             ),
@@ -151,12 +148,6 @@ class FormRequest extends Request
             ),
             self::FLOAT_T => fn() => (
                 $this->sanitizeInput($input, FILTER_SANITIZE_NUMBER_FLOAT, $options)
-            ),
-            self::STRING_T => fn() => (
-                $this->sanitizeInput(trim($input), FILTER_SANITIZE_STRING, [
-                    'options' => $options ?: [],
-                    'flags' => FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH,
-                ])
             ),
             self::ANY_T =>  fn() => (
                 $this->sanitizeInput(trim($input), FILTER_UNSAFE_RAW, [

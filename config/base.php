@@ -15,7 +15,8 @@ define("MODELS_NAMESPACE", "App\\Models");
 define("VIEW_PATH", ROOT_PATH."/resources/views");
 define("ERROR_VIEW_PATH", ROOT_PATH."/resources/errors");
 
-define("APP_NAME", "PPI_STORE");
+define("APP_NAME", "Big Adverts");
+define("APP_AGENT", "PPI_STORE");
 define("SERVER_HOST", "localhost");
 define("SERVER_ADDR", "127.0.0.1");
 define("SERVER_PORT", "80");

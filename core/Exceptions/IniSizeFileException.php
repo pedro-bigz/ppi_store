@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class IniSizeFileException extends CustomException
+class IniSizeFileException extends ApplicationException
 {
     public static function create($message)
     {

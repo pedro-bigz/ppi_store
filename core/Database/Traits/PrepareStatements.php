@@ -17,7 +17,7 @@ trait PrepareStatements
 
     public function makeStatement($query, $bindings = [])
     {
-        return $this->run($query, $bindings, function ($query, $bindings) {
+        return $this->run(trim($query), $bindings, function ($query, $bindings) {
             $statement = $this->bindValues(
                 $this->getPdo()->prepare($query), $this->prepareBindings($bindings)
             );
@@ -30,7 +30,7 @@ trait PrepareStatements
     
     public function makeStatementAndSetAsModified($query, $bindings = [])
     {
-        return $this->run($query, $bindings, function ($query, $bindings) {
+        return $this->run(trim($query), $bindings, function ($query, $bindings) {
             $statement = $this->bindValues(
                 $this->getPdo()->prepare($query), $this->prepareBindings($bindings)
             );
@@ -47,7 +47,7 @@ trait PrepareStatements
 
     public function unprepared($query)
     {
-        return $this->run($query, [], function ($query) {
+        return $this->run(trim($query), [], function ($query) {
             $this->recordsHaveBeenModified(
                 $change = $this->getPdo()->exec($query) !== false
             );

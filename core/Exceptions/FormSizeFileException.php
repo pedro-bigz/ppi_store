@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class FormSizeFileException extends CustomException
+class FormSizeFileException extends ApplicationException
 {
     public static function create($message)
     {

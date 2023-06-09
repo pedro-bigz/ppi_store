@@ -14,13 +14,20 @@ class AnuncioController extends Controller
 
     public function index(Request $request)
     {
-        echo '---';
-        // $request->ajax();
+        $data = [];
+
+        if ($request->ajax()) {
+            return response($data);
+        }
+
+        view('anuncios.index', [
+            'title' => "Listagem de Anúncios",
+        ]);
     }
 
     public function show(Anuncios $anuncio)
     {
-        view('anuncios.index', [
+        view('anuncios.show', [
             'title' => "Anuncio - {$anuncio->titulo}",
         ]);
     }

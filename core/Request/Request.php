@@ -48,7 +48,7 @@ class Request
             'SERVER_NAME' => SERVER_HOST,
             'SERVER_PORT' => SERVER_PORT,
             'HTTP_HOST' => SERVER_HOST,
-            'HTTP_USER_AGENT' => APP_NAME,
+            'HTTP_USER_AGENT' => APP_AGENT,
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'HTTP_ACCEPT_LANGUAGE' => 'en-us,en;q=0.5',
             'HTTP_ACCEPT_CHARSET' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
@@ -67,7 +67,7 @@ class Request
         return json_decode(file_get_contents('php://input') ?: '[]', true);
     }
 
-    public static function make(string $classname)
+    public static function make(string $classname = self::class)
     {
         if (!(factory($classname) instanceof self)) {
             throw new InvalidArgumentException("A classe {$classname} não é subclasse de Request");

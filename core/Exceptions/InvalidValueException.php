@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class InvalidValueException extends CustomException
+class InvalidValueException extends ApplicationException
 {
     public static function create($attribute)
     {

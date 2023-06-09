@@ -36,14 +36,14 @@ abstract class Model
         );
     }
 
-    public static function create()
+    public static function make()
     {
         return new static;
     }
 
     public static function query()
     {
-        return static::create()->newQuery();
+        return static::make()->newQuery();
     }
 
     public function newQuery()
@@ -205,7 +205,12 @@ abstract class Model
         return $this;
     }
 
-    public function getAttributeValue($key)
+    public function get($key)
+    {
+        return $this->getAttribute($key) ?: null;
+    }
+
+    public function getAttribute($key)
     {
         return in_array($key, $this->dates) ?
             Moment::create($this->attributes[$key]) : $this->attributes[$key];
@@ -216,15 +221,12 @@ abstract class Model
         if (! $key) {
             return null;
         }
-        if (!in_array($key, [ 'id', ...$this->fillable, ...$this->dates ])) {
+        if (!in_array($key, [ $this->primaryKey, ...$this->fillable, ...$this->dates ])) {
             return null;
         }
         if (array_key_exists($key, $this->attributes)) {
-            return $this->getAttributeValue($key);
+            return $this->getAttribute($key);
         }
-        // if (array_key_exists($key, $this->relations)) {
-        //     return $this->getRelationValue($key);
-        // }
     }
 
     public function __call($method, $parameters)
@@ -242,7 +244,7 @@ abstract class Model
 
     public static function __callStatic($method, $parameters)
     {
-        return static::create()->{ $method }(...$parameters);
+        return static::make()->{ $method }(...$parameters);
     }
 
     public function transact(Closure $callback)

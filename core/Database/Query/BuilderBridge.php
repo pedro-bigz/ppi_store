@@ -97,9 +97,9 @@ class BuilderBridge
         $values = ":" . implode(", :", array_keys($items));
 
         $this->query->insert(<<<SQL
-            INSERT INTO ({$this->model->getTable()}) ({$columns}) VALUES ({$values})
+            INSERT INTO {$this->model->getTable()} ({$columns}) VALUES ({$values})
         SQL, $items);
-
+        
         return $this->find($this->query->getLastInsertedId());
     }
 
@@ -173,7 +173,7 @@ class BuilderBridge
         return $query;
     }
 
-    public function getDate($data, $first = false)
+    public function getData($data, $first = false)
     {
         if (! $first) {
             return $data;
@@ -195,7 +195,7 @@ class BuilderBridge
     public function selectRaw(string $query, array $bindings = [], bool $first = false)
     {
         return $this->model->setAttributes($this->validateSelect(
-            $this->getDate($this->query->select($query, $bindings), $first), $query, $bindings
+            $this->getData($this->query->select($query, $bindings), $first), $query, $bindings
         ));
     }
 

@@ -35,7 +35,7 @@ class Connection implements ConnectionInterface
 
     public function getLastId()
     {
-        return $this->connection->lastInsertId();
+        return $this->getPdo()->lastInsertId();
     }
 
     public function select($query, $bindings = [])

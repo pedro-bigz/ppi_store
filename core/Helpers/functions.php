@@ -17,10 +17,11 @@ if (! function_exists('_')) {
     }
 }
 
-if (! function_exists('hash')) {
-    function hash($password)
+if (! function_exists('redirect')) {
+    function redirect(string $url)
     {
-        return password_hash($password, PASSWORD_DEFAULT);
+        header("Location: {$url}");
+        die();
     }
 }
 
@@ -42,7 +43,7 @@ if (! function_exists('factory')) {
 if (! function_exists('url')) {
     function url(string $uri = '')
     {
-        return "https://{$_SERVER['HTTP_HOST']}{$uri}";
+        return "http://{$_SERVER['HTTP_HOST']}{$uri}";
     }
 }
 

@@ -1,9 +1,11 @@
 <?php namespace Core\Routing;
 
+use Throwable;
 use Core\Routing\Route;
 use Core\Request\Request;
 use Core\Routing\ControllerRunner;
 use Core\Routing\MiddlewareRunner;
+use Core\Exceptions\ApplicationException;
 
 class RouteAction {
     private $route;
@@ -21,7 +23,13 @@ class RouteAction {
 
     public function run()
     {
-        $this->middlewareRunner->run();
-        $this->controllerRunner->run();
+        try {
+            $this->middlewareRunner->run();
+            $this->controllerRunner->run();
+        } catch (ApplicationException $e) {
+            $e->abort();
+        } catch (Throwable $e) {
+            ApplicationException::casting($e)->abort();
+        }
     }
 }

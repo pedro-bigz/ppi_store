@@ -1,8 +1,10 @@
 <?php namespace Core\Request;
 
-use Exception;
+use Throwable;
+use Core\Request\Request;
 use Core\Debug\DebugBacktrace;
 use Core\Views\ErroPageRender;
+use Core\Exceptions\ApplicationException;
 
 class RequestHandler
 {
@@ -15,11 +17,14 @@ class RequestHandler
     {
         try {
             return $this->object->{ $this->method }();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            $request = Request::make();
             if (DEBUG === false) {
                 ErroPageRender::create($e)->render();
-            } else {
+            } else if (!$request->ajax()) {
                 DebugBacktrace::create($e)->render();
+            } else {
+                ApplicationException::casting($e)->abort();
             }
         }
     }

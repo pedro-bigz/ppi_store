@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class BindParamException extends CustomException
+class BindParamException extends ApplicationException
 {
     public static function create($message)
     {

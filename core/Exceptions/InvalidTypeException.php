@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class InvalidTypeException extends CustomException
+class InvalidTypeException extends ApplicationException
 {
     public static function create($attribute, $type, $currentType)
     {

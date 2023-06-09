@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class ExtensionFileException extends CustomException
+class ExtensionFileException extends ApplicationException
 {
     public static function create($message)
     {

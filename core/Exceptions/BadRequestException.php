@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class BadRequestException extends CustomException
+class BadRequestException extends ApplicationException
 {
     public static function create($message)
     {

@@ -1,0 +1,119 @@
+.advertising-card {
+    margin: 0 auto;
+    border: 1px solid #d5d5d5;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    box-shadow: 0 0 6px 0px #d5d5d5;
+    display: flex;
+    width: 500px;
+    aspect-ratio: 25 / 9;
+}
+
+.advertising-card .advertising-card-photo {
+    max-width: 100%;
+    min-width: 180px;
+}
+
+.advertising-card .advertising-card-photo .advertising-card-photo-image {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    background-size: auto 100%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.advertising-card .advertising-card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.advertising-card .advertising-card-content .advertising-card-title h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.advertising-card .advertising-card-content .advertising-card-price {
+    color: #090099;
+    display: flex;
+    margin-top: auto;
+}
+
+.advertising-card .advertising-card-content .advertising-card-price div {
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+.advertising-card .advertising-card-content .advertising-card-price::before {
+    content: "R$";
+    font-size: .875rem;
+    margin-top: 3px;
+    margin-right: 5px;
+    font-weight: 600;
+}
+
+.advertising-card .advertising-card-content .advertising-card-buttons {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+}
+
+.advertising-card .advertising-card-content .advertising-card-buttons div,
+.advertising-card .advertising-card-content .advertising-card-buttons button {
+    margin: 0;
+    border: none;
+    outline: none;
+    color: white;
+    height: 25px;
+}
+
+.advertising-card .advertising-card-content .advertising-card-buttons div:first-child button {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* .advertising-card .advertising-card-content .advertising-card-buttons button:first-child,
+
+.advertising-card .advertising-card-content .advertising-card-buttons button:last-child {
+
+} */
+
+.advertising-card .advertising-card-content .advertising-card-buttons div:last-child button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.advertising-card .advertising-card-content .advertising-card-edit-button button {
+    background-color: #090099;
+}
+
+.advertising-card .advertising-card-content .advertising-card-edit-button button:hover {
+    background-color: #564aff;
+}
+
+.advertising-card .advertising-card-content .advertising-card-delete-button button {
+    background-color: #990000;
+}
+
+.advertising-card .advertising-card-content .advertising-card-delete-button button:hover {
+    background-color: #ff5757;
+}
+
+.advertising-card .advertising-card-content .advertising-card-buy-button button {
+    background-color: #990000;
+    border-radius: 5px !important;
+}
+
+.advertising-card .advertising-card-content .advertising-card-buy-button button:hover {
+    background-color: #ff5757;
+}

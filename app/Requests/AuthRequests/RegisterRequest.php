@@ -24,7 +24,9 @@ class RegisterRequest extends FormRequest implements FormRequestInterface
     public function getSanitized()
     {
         $sanitized = $this->validated();
-        $sanitized['password'] = hash($sanitized['password']);
+        $sanitized['password'] = password_hash(
+            $sanitized['password'], PASSWORD_DEFAULT
+        );
 
         return $sanitized;
     }

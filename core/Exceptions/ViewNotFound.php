@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class ViewNotFound extends CustomException
+class ViewNotFound extends ApplicationException
 {
     public static function create($message)
     {

@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class PartialFileException extends CustomException
+class PartialFileException extends ApplicationException
 {
     public static function create($message)
     {

@@ -2,7 +2,7 @@
 
 $routes = [
     'GET::/' => [
-        'controller' => '',
+        'controller' => 'AnuncioController::index',
     ],
     'GET::/register' => [
         'controller' => '',
@@ -36,15 +36,15 @@ $routes = [
         'middlewares' => []
     ],
     'GET::/login' => [
-        'controller' => 'Auth\\AuthController::index',
+        'controller' => 'AnuncianteController::login',
     ],
     'GET::/register' => [
-        'controller' => 'RegisterController',
+        'controller' => 'AnuncianteController::register',
     ],
     'POST::/auth/login' => [
         'controller' => 'Auth\\AuthController::login',
     ],
-    'POST::/auth/regiter' => [
+    'POST::/auth/register' => [
         'controller' => 'Auth\\AuthController::register',
     ],
     'DELETE::/auth/logout' => [

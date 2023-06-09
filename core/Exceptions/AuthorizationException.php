@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class AuthorizationException extends CustomException
+class AuthorizationException extends ApplicationException
 {
     public static function create()
     {

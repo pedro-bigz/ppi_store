@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class NoTmpDirFileException extends CustomException
+class NoTmpDirFileException extends ApplicationException
 {
     public static function create($message)
     {

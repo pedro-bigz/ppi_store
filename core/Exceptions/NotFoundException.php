@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class NotFoundException extends CustomException
+class NotFoundException extends ApplicationException
 {
     public static function create($message = 'Página não encontrada')
     {

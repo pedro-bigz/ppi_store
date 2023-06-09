@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class ConnectionNotFound extends CustomException
+class ConnectionNotFound extends ApplicationException
 {
     public static function create($message)
     {

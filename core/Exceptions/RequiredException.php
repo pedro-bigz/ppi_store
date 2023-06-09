@@ -1,6 +1,6 @@
 <?php namespace Core\Exceptions;
 
-class RequiredException extends CustomException
+class RequiredException extends ApplicationException
 {
     public static function create($attribute)
     {
