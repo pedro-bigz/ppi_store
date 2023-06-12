@@ -43,6 +43,9 @@ if (! function_exists('factory')) {
 if (! function_exists('url')) {
     function url(string $uri = '')
     {
+        if (!str_starts_with($uri, '/')) {
+            $uri = '/'.$uri;
+        }
         return "http://{$_SERVER['HTTP_HOST']}{$uri}";
     }
 }

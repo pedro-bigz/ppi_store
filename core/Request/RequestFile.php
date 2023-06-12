@@ -35,6 +35,7 @@ final class RequestFile extends File
 
     public function throwException()
     {
+        $maxFilesize = \UPLOAD_ERR_INI_SIZE === $this->error ? self::getMaxFilesize() / 1024 : 0;
         $errors = [
             UPLOAD_ERR_INI_SIZE => function() {
                 throw IniSizeFileException::create(
@@ -87,7 +88,7 @@ final class RequestFile extends File
 
     public function moveWithUniqueId($directory)
     {
-        $this->move($directory, $this->generateUniqueId($this->name));
+        return $this->move($directory, $this->generateUniqueId($this->name));
     }
 
     public function move(string $directory, string $name = null)
@@ -115,42 +116,42 @@ final class RequestFile extends File
         return $target;
     }
 
-    // public function getMaxFilesize()
-    // {
-    //     $sizePostMax = $this->parseFilesize(ini_get('post_max_size'))
-    //         ?: PHP_INT_MAX;
-    //     $sizeUploadMax = $this->parseFilesize(ini_get('upload_max_filesize'))
-    //         ?: PHP_INT_MAX;
+    public function getMaxFilesize()
+    {
+        $sizePostMax = $this->parseFilesize(ini_get('post_max_size'))
+            ?: PHP_INT_MAX;
+        $sizeUploadMax = $this->parseFilesize(ini_get('upload_max_filesize'))
+            ?: PHP_INT_MAX;
 
-    //     return min($sizePostMax, $sizeUploadMax);
-    // }
+        return min($sizePostMax, $sizeUploadMax);
+    }
 
-    // private function parseFilesize(string $size)
-    // {
-    //     if ($size === '') {
-    //         return 0;
-    //     }
+    private function parseFilesize(string $size)
+    {
+        if ($size === '') {
+            return 0;
+        }
 
-    //     $size = strtolower($size);
+        $size = strtolower($size);
 
-    //     $max = ltrim($size, '+');
-    //     $base = 10;
+        $max = ltrim($size, '+');
+        $base = 10;
 
-    //     if (str_starts_with($max, '0x')) {
-    //         $base = 16;
-    //     } else if (str_starts_with($max, '0')) {
-    //         $base = 8;
-    //     }
+        if (str_starts_with($max, '0x')) {
+            $base = 16;
+        } else if (str_starts_with($max, '0')) {
+            $base = 8;
+        }
 
-    //     $max = intval($max, $base);
+        $max = intval($max, $base);
 
-    //     switch (substr($size, -1)) {
-    //         case 't': $max *= 1024;
-    //         case 'g': $max *= 1024;
-    //         case 'm': $max *= 1024;
-    //         case 'k': $max *= 1024;
-    //     }
+        switch (substr($size, -1)) {
+            case 't': $max *= 1024;
+            case 'g': $max *= 1024;
+            case 'm': $max *= 1024;
+            case 'k': $max *= 1024;
+        }
 
-    //     return $max;
-    // }
+        return $max;
+    }
 }

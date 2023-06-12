@@ -4,23 +4,18 @@ export const api = (defaultUrl = null) => {
     const request = (url, options) => {
         return new Promise((resolve, reject) => {
             const error = {};
-            const fetchSuccess = (response) => {
-                return resolve(response);
-            }
-            const fetchError = () => {
-                return reject(error);
-            }
             fetch(url, options)
-                .then(async response => {
-                    const data = await response.json();
-                    if (response.ok === false) {
-                        error.response = { ...response, data };
-                        throw new Error(response.statusText);
-                    }
-                    return data
+                .then(response => {
+                    response.json()
+                        .then(data => {
+                            if (response.ok === false) {
+                                return reject(data);
+                            }
+                            resolve(data)
+                        })
+                        .catch(reject)
                 })
-                .then(fetchSuccess)
-                .catch(fetchError);
+                .catch(reject);
         })
     };
     const getUrl = (url) => {

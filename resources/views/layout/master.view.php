@@ -23,6 +23,7 @@
 
     <!-- </?php dd(empty($bootstrap)) ?> -->
     <?php if (!empty($bootstrap)): ?>
+        <!-- <link rel="stylesheet" href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css"> -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <?php endif ?>

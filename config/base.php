@@ -10,6 +10,7 @@ define("DEBUG", true);
 define("ROOT_PATH", "/var/www/ufu/PPI_STORE");
 
 define("CONTROLLERS_NAMESPACE", "App\\Controllers");
+define("MIDDLEWARES_NAMESPACE", "App\\Middlewares");
 define("MODELS_NAMESPACE", "App\\Models");
 
 define("VIEW_PATH", ROOT_PATH."/resources/views");

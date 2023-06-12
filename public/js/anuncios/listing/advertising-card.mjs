@@ -1,57 +1,65 @@
-export const editButton = (action) => {
-    const card = document.createElement('div');
+import { thrash, edit, buy } from "../../icons/index.mjs";
+
+export const editButton = (card, action) => {
+    const container = document.createElement('div');
     const btn = document.createElement('button');
 
-    btn.innerHTML = 'icon';
-    btn.onclick = action;
+    btn.innerHTML = edit();
+    btn.onclick = function() {
+        action(card, this);
+    }
     
-    card.classList.add('advertising-card-edit-button');
-    card.appendChild(btn);
+    container.classList.add('advertising-card-edit-button');
+    container.appendChild(btn);
 
-    return card;
+    return container;
 }
 
-export const deleteButton = (action) => {
-    const card = document.createElement('div');
+export const deleteButton = (card, action) => {
+    const container = document.createElement('div');
     const btn = document.createElement('button');
 
-    btn.innerHTML = 'icon';
-    btn.onclick = action;
+    btn.innerHTML = thrash();
+    btn.onclick = function() {
+        action(card, this);
+    }
     
-    card.classList.add('advertising-card-delete-button');
-    card.appendChild(btn);
+    container.classList.add('advertising-card-delete-button');
+    container.appendChild(btn);
 
-    return card;
+    return container;
 }
 
-export const buyButton = (action) => {
-    const card = document.createElement('div');
+export const buyButton = (card, action) => {
+    const container = document.createElement('div');
     const btn = document.createElement('button');
 
-    btn.innerHTML = 'icon';
-    btn.onclick = action;
+    btn.innerHTML = buy();
+    btn.onclick = function() {
+        action(card, this);
+    }
     
-    card.classList.add('advertising-card-buy-button');
-    card.appendChild(btn);
+    container.classList.add('advertising-card-buy-button');
+    container.appendChild(btn);
 
-    return card;
+    return container;
 }
 
-export const ownerButton = (onEdit, onDelete) => {
+export const ownerButton = (card, onEdit, onDelete) => {
     const buttons = document.createElement('div');
 
     buttons.classList.add('advertising-card-buttons');
-    buttons.appendChild(editButton(onEdit))
-    buttons.appendChild(deleteButton(onDelete))
+    buttons.appendChild(editButton(card, onEdit))
+    buttons.appendChild(deleteButton(card, onDelete))
     
     return buttons;
 }
 
-export const viewButton = (onBuy) => {
+export const viewButton = (card, onBuy) => {
     const buttons = document.createElement('div');
     
     buttons.classList.add('advertising-card-buttons');
-    buttons.appendChild(buyButton(onBuy))
+    buttons.appendChild(buyButton(card, onBuy))
     
     return buttons;
 }
@@ -117,7 +125,7 @@ export const advertisingCard = ({ image, title, description, price, isAdmin, onE
     content.appendChild(titleContainer(title));
     content.appendChild(descriptionContainer(description));
     content.appendChild(priceContainer(price));
-    content.appendChild(isAdmin ? ownerButton(onEdit, onDelete) : viewButton(onBuy));
+    content.appendChild(isAdmin ? ownerButton(card, onEdit, onDelete) : viewButton(card, onBuy));
 
     card.classList.add('advertising-card');
     card.appendChild(imageContainer(image));

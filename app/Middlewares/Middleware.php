@@ -1,17 +1,17 @@
-<?php namespace Middlewares;
+<?php namespace App\Middlewares;
 
-use Core\Request;
+use Core\Request\Request;
 
 abstract class Middleware
 {
-    private Middleware $next;
+    private ?Middleware $next;
 
     public function __construct()
     {
         $this->next = null;
     }
 
-    abstract function handler(Request $request);
+    abstract public function handler(Request $request);
 
     public function setNext($next)
     {

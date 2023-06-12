@@ -47,7 +47,7 @@ class Paginator
         );
         $this->attachSearch(
             $request->get('search', ''),
-            $request->get('search', $searchIn)
+            $request->get('searchIn', $searchIn)
         );
         $this->attachPagination(
             $request->get('page', 1),
@@ -94,8 +94,8 @@ class Paginator
 
         $prepared = implode(" OR ", array_map(function($column) use ($words) {
             return implode(" AND ", array_map(function($word, $key) use ($column) {
-                $this->bindings["{$column}_{$key}"] = $word;
-                return "{$column} LIKE '%:{$column}_{$key}%'";
+                $this->bindings["{$column}_{$key}"] = "%{$word}%";
+                return "{$column} LIKE :{$column}_{$key}";
             }, $words, array_keys($words)));
         }, $this->searchIn));
 
@@ -105,9 +105,11 @@ class Paginator
     public function preparePagination()
     {
         $this->searchQuery = $this->prepareSearch();
+        
         $register = $this->model->select(
             columns: ["count(1) as total"],
             where: $this->searchQuery,
+            bindings: $this->bindings,
             first: true
         );
 

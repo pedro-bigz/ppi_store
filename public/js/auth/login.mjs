@@ -1,11 +1,18 @@
-import { ajax, form, useAlerts } from '../helpers/index.mjs'
+import { ajax, form, useAlerts, delay } from '../helpers/index.mjs'
 
 const alerts = useAlerts();
 
 export const login = (url, data) => {
     ajax.post(url, data)
-        .then(response => alerts.success(response).showFor(5000))
-        .catch(error => alerts.error(error.response.data.message).showFor(5000))
+        .then(response => {
+            alerts.success(response.message).showFor(5000)
+            if (response?.redirect) {
+                delay(2000).then(() => {
+                    window.location.replace(response.redirect);
+                })
+            }
+        })
+        .catch(error => console.log(error))
 }
 
 export const load = () => {

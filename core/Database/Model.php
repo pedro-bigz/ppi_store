@@ -29,7 +29,7 @@ abstract class Model
     protected array $dates = [];
     protected array $with = [];
 
-    protected array $attributes;
+    protected array $attributes = [];
 
     public static function all($columns = ['*'])
     {

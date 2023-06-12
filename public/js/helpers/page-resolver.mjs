@@ -5,6 +5,7 @@ export const pageResolver = (modules) => {
         'route-home': modules.anuncios.listing,
         'route-anuncios/create': modules.anuncios.form,
         'route-anuncios//edit': modules.anuncios.form,
+        'route-anuncios//show': modules.anuncios.show,
     }
     const path = window.location.pathname;
     const pattern = /\d+(\.\d+)?/g;

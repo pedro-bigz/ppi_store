@@ -48,7 +48,7 @@ class File extends SplFileInfo
     public function obtainName($name)
     {
         return $name === null ?
-            $this->getBasename() : $this->getName($name);
+            $this->getBasename() : $name;
     }
 
     public function getContent(): string

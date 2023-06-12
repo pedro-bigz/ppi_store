@@ -1,5 +1,6 @@
 <?php namespace App\Requests\AnunciosRequests;
 
+use Core\Auth\Auth;
 use Core\Request\FormRequest;
 use Core\Request\Contracts\FormRequestInterface;
 
@@ -18,6 +19,7 @@ class StoreAnuncioRequest extends FormRequest implements FormRequestInterface
             'categoria' => [self::REQUIRED, self::STRING_T],
             'endereco' => [self::REQUIRED, self::STRING_T],
             'descricao' => [self::NULLABLE, self::STRING_T],
+            'file_bag' => [self::NULLABLE, self::STRING_T],
         ];
     }
 
@@ -27,7 +29,8 @@ class StoreAnuncioRequest extends FormRequest implements FormRequestInterface
 
         $sanitized['categoria_id'] = intval($sanitized['categoria']);
         $sanitized['endereco_id'] = intval($sanitized['endereco']);
-        $sanitized['anunciante_id'] = 1;
+        $sanitized['file_bag'] = json_decode(html_entity_decode($sanitized['file_bag']), true);
+        $sanitized['anunciante_id'] = Auth::user()->getAuthIdentifier();
         
         return $sanitized;
     }

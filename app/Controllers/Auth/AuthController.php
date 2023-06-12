@@ -69,6 +69,12 @@ class AuthController extends Controller
 
             $anuciante = Anunciantes::create($sanitized);
 
+            $_SESSION['auth'] = base64_encode(json_encode([
+                'id' => $anuciante->id, 
+                'email' => $anuciante->email,
+                'start' => Moment::now()->format(Moment::FORMAT),
+            ]));
+
             return response([
                 'message' => 'Cadastro realizado com sucesso',
                 'redirect' => url(),

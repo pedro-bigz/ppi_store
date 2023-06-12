@@ -5,7 +5,7 @@ const alerts = useAlerts();
 export const register = (url, data) => {
     ajax.post(url, data)
         .then(response => alerts.success(response.message).showFor(5000))
-        .catch(error => alerts.error(error.response.data.message).showFor(5000))
+        .catch(error => alerts.error(error.message || 'Erro').showFor(5000))
 }
 
 export const load = () => {

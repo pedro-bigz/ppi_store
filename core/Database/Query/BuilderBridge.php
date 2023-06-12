@@ -94,10 +94,10 @@ class BuilderBridge
 
     public function create(array $items)
     {
-        $items = [];
+        $inputs = [];
         foreach ($this->model->getFillable() as $column) {
             if (array_key_exists($column, $items)) {
-                $items[$column] = $items[$column];
+                $inputs[$column] = $items[$column];
             }
         }
 

@@ -6,42 +6,36 @@ $routes = [
     ],
     'POST::/upload' => [
         'controller' => 'FileController::upload',
-        'middlewares' => []
     ],
     'GET::/register' => [
         'controller' => '',
     ],
     'GET::/anuncios/:anuncio/show' => [
         'controller' => 'AnuncioController::show',
-        'middlewares' => []
+    ],
+    'GET::/anuncios/:anuncio/fotos' => [
+        'controller' => 'AnuncioController::fotos',
     ],
     'GET::/anuncios/create' => [
         'controller' => 'AnuncioController::create',
-        'middlewares' => []
+        'middlewares' => ['AuthMiddleware']
     ],
     'POST::/anuncios/store' => [
         'controller' => 'AnuncioController::store',
-        'middlewares' => []
+        'middlewares' => ['AuthMiddleware']
     ],
     'GET::/anuncios/:anuncio/edit' => [
         'controller' => 'AnuncioController::edit',
-        'middlewares' => []
-    ],
-    'GET::/anuncios/:anuncio/buy' => [
-        'controller' => 'AnuncioController::buy',
-        'middlewares' => []
+        'middlewares' => ['AuthMiddleware']
     ],
     'POST::/anuncios/:anuncio/purchase' => [
         'controller' => 'AnuncioController::purchase',
-        'middlewares' => []
     ],
     'POST::/anuncios/:anuncio' => [
         'controller' => 'AnuncioController::update',
-        'middlewares' => []
     ],
     'DELETE::/anuncios/:anuncio' => [
         'controller' => 'AnuncioController::delete',
-        'middlewares' => []
     ],
     'GET::/login' => [
         'controller' => 'AnuncianteController::login',
@@ -57,7 +51,7 @@ $routes = [
     ],
     'DELETE::/auth/logout' => [
         'controller' => 'Auth\\AuthController::delete',
-        'middlewares' => []
+        'middlewares' => ['AuthMiddleware']
     ],
 ];
 

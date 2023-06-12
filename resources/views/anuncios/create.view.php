@@ -1,6 +1,6 @@
-<div class="container book-bg" style="height: 100%">
+<div class="container book-bg" style="min-height: 100%">
     <div class="page-header">
-        <h2 class="page-title bright-turquoise"><?= APP_NAME ?></h2>
+        <h3 class="page-title page-title-left bright-turquoise"><?= APP_NAME ?></h3>
     </div>
     <div class="card-form">
         <form class="form-global form-anuncio" action="<?= url('/anuncios/store') ?>" method="post" enctype="multipart/form-data">
@@ -20,6 +20,8 @@
                     <option value="<?= $endereco['id'] ?>"><?= $endereco['logradouro'] ?></option>
                 <?php endforeach ?>
             </select>
+            <input type="hidden" name="file_bag" id="file_bag" />
+            <div class="preview-uploaded-container"></div>
             <div class="input-file-container"></div>
             <textarea id="descricao" name="descricao"></textarea>
 

@@ -1,11 +1,13 @@
 import { ajax, baseUrl } from '../../helpers/index.mjs'
 import { advertisingCard } from './advertising-card.mjs';
+import * as search from './search.mjs';
 
 const baseImageUrl = 'http://ppi.com/images';
 const defaultImageSrc = 'sem_foto.png';
 const collection = {
     items: [],
-    loaded: 0
+    loaded: 0,
+    filters: {},
 };
 const pagination = {
     page: 1,
@@ -14,7 +16,15 @@ const pagination = {
     orderDirection: 'desc',
 }
 
-export const listAnuncios = (url, callback) => {
+export const resetCollection = () => {
+    const container = document.querySelector('.advertising-card-container');
+    collection.items = [];
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+export const listAnuncios = (url, callback, resetPage = false) => {
     const options = {
         params: {
             orderBy: pagination.orderBy,
@@ -23,6 +33,14 @@ export const listAnuncios = (url, callback) => {
             per_page: pagination.perPage,
         }
     }
+
+    if (resetPage === true) {
+        options.params.page = 1;
+        resetCollection();
+    }
+
+    Object.assign(options.params, collection.filters)
+
     ajax.get(url, options)
         .then(response => callback(response?.data?.data))
         .catch(error => console.log(error))
@@ -30,7 +48,6 @@ export const listAnuncios = (url, callback) => {
 
 export const setAnuncios = (anuncios) => {
     pagination.page++;
-    console.log(anuncios);
     collection.items = [ ...collection.items, ...anuncios ];
     collection.loaded = collection.items.length;
 
@@ -41,7 +58,8 @@ export const onEditAnuncio = (anuncioId) => {
     window.open(`${baseUrl}/anuncios/${anuncioId}/edit`, '_blank');
 }
 
-export const onDeleteAnuncio = (anuncioId) => {
+export const onDeleteAnuncio = (anuncioId, card) => {
+    card.parentNode.removeChild(card);
     ajax.delete(`${baseUrl}/anuncios/${anuncioId}`)
         .then(response => {
             console.log(response);
@@ -51,11 +69,22 @@ export const onDeleteAnuncio = (anuncioId) => {
         });
 }
 
+export const goToAnuncio = (anuncioId) => {
+    window.open(`${baseUrl}/anuncios/${anuncioId}/show`, '_blank');
+}
+
 export const onBuyAnuncio = (anuncioId) => {
-    window.open(`${baseUrl}/anuncios/${anuncioId}/buy`, '_blank');
+    goToAnuncio(anuncioId);
 }
 
 export const load = () => {
+    init();
+    search.load(collection, () => {
+        listAnuncios(baseUrl, setAnuncios, true)
+    });
+}
+
+export const init = () => {
     listAnuncios(baseUrl, setAnuncios);
 }
 
@@ -73,10 +102,11 @@ export const render = (anuncios) => {
             description: anuncio.descricao,
             price: anuncio.preco,
             isAdmin: anuncio.owner,
-            onEdit: () => onEditAnuncio(anuncio.id),
-            onDelete: () => onDeleteAnuncio(anuncio.id),
-            onBuy: () => onBuyAnuncio(anuncio.id)
+            onEdit: (card, elemnt) => onEditAnuncio(anuncio.id, card, elemnt),
+            onDelete: (card, elemnt) => onDeleteAnuncio(anuncio.id, card, elemnt),
+            onBuy: (card, elemnt) => onBuyAnuncio(anuncio.id, card, elemnt),
         });
+        card.addEventListener("click", () => goToAnuncio(anuncio.id));
         container.appendChild(card);
     });
 }

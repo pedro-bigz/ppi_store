@@ -1,0 +1,39 @@
+.preview-uploaded-container {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.preview-uploaded-container .image-preview {
+    width: 100px;
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-y: center;
+    background-color: gray;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.image-preview-container {
+    position: relative;
+}
+
+.image-preview-thrash-button {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px !important;
+    height: 25px !important;
+    margin-bottom: 0 !important;
+    background-color: rgb(94, 0, 0) !important;
+}

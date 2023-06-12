@@ -24,13 +24,13 @@ class MiddlewareRunner extends Runner implements RunnerInterface
         }
 
         $classname = array_shift($middlewares);
-        $middleware = $this->getMiddlewareInstance($classname);
+        $this->middlewares[0] = $this->getMiddlewareInstance($classname);
 
-        foreach ($middlewares as $classname) {
+        foreach ($middlewares as $key => $classname) {
             $current = $this->getMiddlewareInstance($classname);
 
-            $middleware->setNext($current);
-            $middleware = $current;
+            $this->middlewares[$key]->setNext($current);
+            $this->middlewares[$key] = $current;
         }
 
         return $this;
@@ -45,6 +45,6 @@ class MiddlewareRunner extends Runner implements RunnerInterface
 
     public function getMiddlewareInstance($classname)
     {
-        return $this->getInstance($classname);
+        return $this->getInstance(MIDDLEWARES_NAMESPACE.'\\'.$classname);
     }
 }
