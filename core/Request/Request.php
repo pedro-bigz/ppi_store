@@ -123,6 +123,9 @@ class Request
         } else {
             $query = $parameters;
         }
+        if (!empty($files)) {
+            $files = [$files];
+        }
 
         $queryString = '';
         if (isset($urlParts['query'])) {
@@ -171,7 +174,7 @@ class Request
         return $this->request->getAll();
     }
 
-    public function get(string $key, string|null $default = null)
+    public function get(string $key, $default = null)
     {
         return $this->request->get($key) ?: $default;
     }
@@ -184,6 +187,21 @@ class Request
     public function headers(string $key)
     {
         return $this->headers->get($key);
+    }
+
+    public function cookie(string $key, $default = null)
+    {
+        return $this->cookies->get($key) ?: $default;
+    }
+
+    public function files()
+    {
+        return $this->files;
+    }
+
+    public function getFile($index)
+    {
+        return $this->files->get($index);
     }
 
     public function __get(string $key)

@@ -1,6 +1,7 @@
 <?php namespace Core\Request;
 
 use SplFileInfo;
+use Core\Files\File;
 use Core\Exceptions\FileException;
 use Core\Exceptions\NoFileException;
 use Core\Exceptions\IniSizeFileException;
@@ -10,14 +11,16 @@ use Core\Exceptions\NoTmpDirFileException;
 use Core\Exceptions\ExtensionFileException;
 use Core\Exceptions\CannotWriteFileException;
 
-final class RequestFile extends SplFileInfo
+final class RequestFile extends File
 {
     public function __construct(string $path, string $name, string $mimeType = null, int $error = null)
     {
         $this->path = $path;
         $this->name = $name;
-        $this->mimeType = $mimeType;
+        $this->mimeType = $mimeType ?: 'application/octet-stream';
         $this->error = $error;
+
+        parent::__construct($path);
     }
 
     public function validate()
@@ -25,63 +28,72 @@ final class RequestFile extends SplFileInfo
         return UPLOAD_ERR_OK === $this->error && is_uploaded_file($this->getPathname());
     }
 
-    protected function getTargetFile(string $directory, string $name = null)
+    public function getMimeType()
     {
-        if (!is_dir($directory)) {
-            if (@mkdir($directory, 0777, true) && !is_dir($directory) === false) {
-                throw new FileException('Unable to create the "%s" directory.', $directory);
-            }
-        } elseif (!is_writable($directory)) {
-            throw new FileException('Unable to write in the "%s" directory.', $directory);
+        return $this->mimeType;
+    }
+
+    public function throwException()
+    {
+        $errors = [
+            UPLOAD_ERR_INI_SIZE => function() {
+                throw IniSizeFileException::create(
+                    'The file "%s" exceeds your upload_max_filesize ini directive (limit is %d KiB).', $this->name, $maxFilesize
+                );
+            },
+            UPLOAD_ERR_FORM_SIZE => function() {
+                throw FormSizeFileException::create(
+                    'The file "%s" exceeds the upload limit defined in your form.', $this->name
+                );
+            },
+            UPLOAD_ERR_PARTIAL => function() {
+                throw PartialFileException::create(
+                    'The file "%s" was only partially uploaded.', $this->name
+                );
+            },
+            UPLOAD_ERR_NO_FILE => function() {
+                throw NoFileException::create(
+                    'No file was uploaded.'
+                );
+            },
+            UPLOAD_ERR_CANT_WRITE => function() {
+                throw CannotWriteFileException::create(
+                    'The file "%s" could not be written on disk.', $this->name
+                );
+            },
+            UPLOAD_ERR_NO_TMP_DIR => function() {
+                throw NoTmpDirFileException::create(
+                    'File could not be uploaded: missing temporary directory.'
+                );
+            },
+            UPLOAD_ERR_EXTENSION => function() {
+                throw ExtensionFileException::create(
+                    'File upload was stopped by a PHP extension.'
+                );
+            },
+        ];
+
+        if (! $thrower = $errors[$this->error]) {
+            throw new FileException($this->getErrorMessage());
         }
 
-        $target = rtrim($directory, '/\\').\DIRECTORY_SEPARATOR.(null === $name ? $this->getBasename() : $this->getName($name));
+        $thrower();
+    }
+    
+    public function generateUniqueId($filename)
+    {
+        return strRandom(40).'.'.pathinfo($filename, PATHINFO_EXTENSION);
+    }
 
-        return new static($target, false);
+    public function moveWithUniqueId($directory)
+    {
+        $this->move($directory, $this->generateUniqueId($this->name));
     }
 
     public function move(string $directory, string $name = null)
     {
         if (!$this->validate()) {
-            $errors = [
-                UPLOAD_ERR_INI_SIZE => function() {
-                    throw IniSizeFileException::create(
-                        'The file "%s" exceeds your upload_max_filesize ini directive (limit is %d KiB).', $this->name, $maxFilesize
-                    );
-                },
-                UPLOAD_ERR_FORM_SIZE => function() {
-                    throw FormSizeFileException::create(
-                        'The file "%s" exceeds the upload limit defined in your form.', $this->name
-                    );
-                },
-                UPLOAD_ERR_PARTIAL => function() {
-                    throw PartialFileException::create(
-                        'The file "%s" was only partially uploaded.', $this->name
-                    );
-                },
-                UPLOAD_ERR_NO_FILE => function() {
-                    throw NoFileException::create(
-                        'No file was uploaded.'
-                    );
-                },
-                UPLOAD_ERR_CANT_WRITE => function() {
-                    throw CannotWriteFileException::create(
-                        'The file "%s" could not be written on disk.', $this->name
-                    );
-                },
-                UPLOAD_ERR_NO_TMP_DIR => function() {
-                    throw NoTmpDirFileException::create(
-                        'File could not be uploaded: missing temporary directory.'
-                    );
-                },
-                UPLOAD_ERR_EXTENSION => function() {
-                    throw ExtensionFileException::create(
-                        'File upload was stopped by a PHP extension.'
-                    );
-                },
-            ];
-    
-            throw new FileException($this->getErrorMessage());
+            $this->throwException(); 
         }
 
         $target = $this->getTargetFile($directory, $name);
@@ -90,7 +102,7 @@ final class RequestFile extends SplFileInfo
         try {
             $moved = move_uploaded_file($this->getPathname(), $target);
         } finally {
-            restore_error_handler();
+            restore_error_handler(); // Restaura a função anterior para gerenciamento de erro
         }
         if (!$moved) {
             throw new FileException(

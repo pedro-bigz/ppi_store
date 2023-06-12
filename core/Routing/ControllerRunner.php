@@ -76,7 +76,7 @@ class ControllerRunner extends Runner implements RunnerInterface
             ],
             $reflection->getParameters()
         );
-        
+
         return $controllerParams;
     }
 

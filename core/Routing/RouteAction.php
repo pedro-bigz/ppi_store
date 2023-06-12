@@ -23,13 +23,7 @@ class RouteAction {
 
     public function run()
     {
-        try {
-            $this->middlewareRunner->run();
-            $this->controllerRunner->run();
-        } catch (ApplicationException $e) {
-            $e->abort();
-        } catch (Throwable $e) {
-            ApplicationException::casting($e)->abort();
-        }
+        $this->middlewareRunner->run();
+        $this->controllerRunner->run();
     }
 }

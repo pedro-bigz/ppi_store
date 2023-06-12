@@ -78,7 +78,7 @@ class ItemContainer implements IteratorAggregate, Countable
         $this->items = $items;
     }
 
-    public function setItems($key, $value)
+    public function setItem($key, $value)
     {
         $this->items[$key] = $value;
     }

@@ -45,12 +45,13 @@ class BuilderBridge
     public function select(
         array $columns = ['*'],
         array|string|null $joins = null,
-        string|null $where = null,
+        ?string $where = null,
         int|string|null $limit = null,
         int|string|null $offset = null,
-        string|null $groups = null,
-        string|null $order = null,
-        string|null $having = null,
+        ?string $groups = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = 'asc',
+        ?string $having = null,
         array $bindings = [],
         bool $first = false,
     ) {
@@ -59,28 +60,28 @@ class BuilderBridge
         if (is_array($joins)) {
             $joins = implode(' ', $joins);
         }
-        if (is_string($where)) {
+        if (is_string($where) && strlen($where) > 0) {
             $where = "WHERE {$where}";
         }
-        if (is_int($limit)) {
+        if (! is_null($limit)) {
             $limit = "LIMIT {$limit}";
         }
-        if (is_int($offset)) {
+        if (! is_null($offset)) {
             $offset = "OFFSET {$offset}";
         }
-        if (is_string($groups)) {
+        if (is_string($groups) && strlen($groups) > 0) {
             $groups = "GROUP BY {$groups}";
         }
-        if (is_string($order)) {
-            $order = "ORDER BY {$order}";
+        if (is_string($orderBy) && strlen($orderBy) > 0) {
+            $order = "ORDER BY {$orderBy} {$orderDirection}";
         }
-        if (is_string($having)) {
+        if (is_string($having) && strlen($having) > 0) {
             $having = "HAVING {$having}";
         }
 
         return $this->selectRaw(<<<SQL
             SELECT {$select} FROM {$this->model->getTable()} {$joins}
-            {$where} {$limit} {$offset} {$groups} {$order} {$having}
+            {$where} {$order} {$limit} {$offset} {$groups} {$having}
         SQL, $bindings, $first);
     }
 
@@ -93,12 +94,19 @@ class BuilderBridge
 
     public function create(array $items)
     {
-        $columns = implode(", ", array_keys($items));
-        $values = ":" . implode(", :", array_keys($items));
+        $items = [];
+        foreach ($this->model->getFillable() as $column) {
+            if (array_key_exists($column, $items)) {
+                $items[$column] = $items[$column];
+            }
+        }
+
+        $columns = implode(", ", array_keys($inputs));
+        $values = ":" . implode(", :", array_keys($inputs));
 
         $this->query->insert(<<<SQL
             INSERT INTO {$this->model->getTable()} ({$columns}) VALUES ({$values})
-        SQL, $items);
+        SQL, $inputs);
         
         return $this->find($this->query->getLastInsertedId());
     }
@@ -110,51 +118,60 @@ class BuilderBridge
         int|string|null $limit = null,
         int|string|null $offset = null
     ) {
-        $set = implode(', ', array_map(
-            fn($column) => "{$column} = :{$column}",
-            array_keys($columns))
+        $items = [];
+        $column = $this->model->getKeyName();
+        if (array_key_exists($column, $columns)) {
+            $items[$column] = $columns[$column];
+        }
+        foreach ($this->model->getFillable() as $column) {
+            if (array_key_exists($column, $columns)) {
+                $items[$column] = $columns[$column];
+            }
+        }
+
+        $set = implode(', ',
+            array_map(
+                fn($column) => "{$this->model->getColumnFullName($column)} = :{$column}",
+                array_keys($items)
+            )
         );
 
         if (is_array($joins)) {
             $joins = implode(' ', $joins);
         }
-        if (is_string($where)) {
+        if (is_string($where) && strlen($where) > 0) {
             $where = "WHERE {$where}";
         }
-        if (is_int($limit)) {
+        if (! is_null($limit)) {
             $limit = "LIMIT {$limit}";
         }
-        if (is_int($offset)) {
+        if (! is_null($offset)) {
             $offset = "OFFSET {$offset}";
         }
 
         return $this->updateRaw(<<<SQL
             UPDATE {$this->model->getTable()} {$joins}
             SET {$set} {$where} {$limit} {$offset}
-        SQL, $columns);
+        SQL, $items);
     }
 
     public function delete(
-        string|int $id,
         array|string|null $joins = null,
-        string|null $where = null,
+        ?string $where = null,
         int|string|null $limit = null,
         int|string|null $offset = null,
-        string|null $groups = null,
-        string|null $order = null,
-        string|null $having = null,
         array $bindings = []
     ) {
         if (is_array($joins)) {
             $joins = implode(' ', $joins);
         }
-        if (is_string($where)) {
+        if (is_string($where) && strlen($where) > 0) {
             $where = "WHERE {$where}";
         }
-        if (is_int($limit)) {
+        if (! is_null($limit)) {
             $limit = "LIMIT {$limit}";
         }
-        if (is_int($offset)) {
+        if (! is_null($offset)) {
             $offset = "OFFSET {$offset}";
         }
 
@@ -178,12 +195,12 @@ class BuilderBridge
         if (! $first) {
             return $data;
         }
-        return current($data);
+        return $data[0];
     }
 
     public function validateSelect($data, $query, $bindings)
     {
-        if (empty($data)) {
+        if (count($data) === 0) {
             throw NotFoundException::create(
                 "Item não encontrado! (SQL: {$this->bindToLog($query, $bindings)})"
             );
@@ -194,8 +211,8 @@ class BuilderBridge
 
     public function selectRaw(string $query, array $bindings = [], bool $first = false)
     {
-        return $this->model->setAttributes($this->validateSelect(
-            $this->getData($this->query->select($query, $bindings), $first), $query, $bindings
+        return $this->model->setAttributes($this->getData(
+            $this->query->select($query, $bindings), $first
         ));
     }
 

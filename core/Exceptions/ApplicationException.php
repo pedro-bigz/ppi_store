@@ -5,6 +5,13 @@ use Throwable;
 
 class ApplicationException extends Exception
 {
+    private $customTrace;
+    public function __construct($message = "", $code = 0, ?Throwable $previous = null, $customTrace = [])
+    {
+        parent::__construct($message, $code, $previous);
+        $this->customTrace = $customTrace;
+    }
+
     public static function createf($message, $code)
     {
         return new static(sprintf(array_shift($message), ...$message), $code);
@@ -12,7 +19,7 @@ class ApplicationException extends Exception
 
     public static function casting(Throwable $e)
     {
-        return new static($e->getMessage(), $e->getCode(), $e->getPrevious());
+        return new static($e->getMessage(), $e->getCode(), $e->getPrevious(), $e->getTrace());
     }
 
     public function abort()
@@ -31,8 +38,13 @@ class ApplicationException extends Exception
         ]);
     }
 
+    public function getCustomTrace()
+    {
+        return $this->customTrace;
+    }
+
     public function getDebugTrace()
     {
-        return DEBUG ? $this->getTrace() : [];
+        return DEBUG ? ($this->getCustomTrace() ?: $this->getTrace()) : [];
     }
 }

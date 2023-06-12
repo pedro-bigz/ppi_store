@@ -6,14 +6,14 @@ class AnuncianteController extends Controller
 {
     public function login()
     {
-        view('login.index', [
+        return view('login.index', [
             'title' => "Login",
         ]);
     }
 
     public function register()
     {
-        view('register.index', [
+        return view('register.index', [
             'title' => "Cadastro",
         ]);
     }

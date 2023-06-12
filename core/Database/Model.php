@@ -19,6 +19,8 @@ abstract class Model
 
     public bool $timestamps = true;
     public bool $isLoaded = false;
+    public bool $updated = false;
+    public bool $deleted = false;
 
     public string $created_at_column = 'created_at';
     public string $updated_at_column = 'updated_at';
@@ -163,7 +165,7 @@ abstract class Model
 
     public function getFillable()
     {
-        return $this->fillable;
+        return $this->fillable ?: [];
     }
 
     public function usesTimestamps()
@@ -205,9 +207,24 @@ abstract class Model
         return $this;
     }
 
+    public function getAttributes()
+    {
+        return $this->attributes ?: [];
+    }
+
+    public function getAll()
+    {
+        return $this->getAttributes();
+    }
+
     public function get($key)
     {
         return $this->getAttribute($key) ?: null;
+    }
+
+    public function first()
+    {
+        return $this->get(0);
     }
 
     public function getAttribute($key)
@@ -240,6 +257,55 @@ abstract class Model
                 'Call to undefined method %s::%s()', static::class, $method
             ));
         }
+    }
+    
+    public function update($items)
+    {
+        if (! array_key_exists($this->getKeyName(), $this->getAttributes())) {
+            return $this->newQuery()->update(...func_get_args());
+        }
+        if ($this->isLoaded === false) {
+            return;
+        }
+        $items[$this->getKeyName()] = $this->getAttribute(
+            $this->getKeyName()
+        );
+        $this->newQuery()->update(
+            columns: $items,
+            where: "{$this->getFullKeyName()} = :{$this->getKeyName()}"
+        );
+    }
+    
+    public function delete()
+    {
+        if (! array_key_exists($this->getKeyName(), $this->getAttributes())) {
+            return $this->newQuery()->delete(...func_get_args());
+        }
+        if ($this->isLoaded === false) {
+            return;
+        }
+        $this->newQuery()->deleteByKey(
+            $this->getAttribute($this->getKeyName())
+        );
+    }
+
+    public function updated($data)
+    {
+        $this->updated = true;
+        foreach ($data as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
+    }
+
+    public function deleted($data)
+    {
+        $this->deleted = true;
+        $this->attributes = [];
+    }
+
+    public function isEmpty()
+    {
+        return empty($this->getAttributes());    
     }
 
     public static function __callStatic($method, $parameters)

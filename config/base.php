@@ -14,6 +14,7 @@ define("MODELS_NAMESPACE", "App\\Models");
 
 define("VIEW_PATH", ROOT_PATH."/resources/views");
 define("ERROR_VIEW_PATH", ROOT_PATH."/resources/errors");
+define("FILE_UPLOAD_PATH", ROOT_PATH."/public/images");
 
 define("APP_NAME", "Big Adverts");
 define("APP_AGENT", "PPI_STORE");

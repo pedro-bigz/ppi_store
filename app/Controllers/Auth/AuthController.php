@@ -25,6 +25,11 @@ class AuthController extends Controller
                 bindings: ['email' => $sanitized['email']],
                 first: true,
             );
+            if ($anuciante->isEmpty()) {
+                throw NotFoundException::create(
+                    "Item não encontrado! (SQL: {$this->bindToLog($query, $bindings)})"
+                );
+            }
             if (!password_verify($sanitized['password'], $anuciante->password)) {
                 throw AuthenticationException::create();
             }

@@ -3,7 +3,7 @@
         <h2 class="page-title bright-turquoise"><?= APP_NAME ?></h2>
     </div>
     <div class="card-form">
-        <form class="form-login" action="/auth/login" method="post">
+        <form class="form-global form-login" action="/auth/login" method="post">
             <div>
                 <h2>Login</h2>
             </div>
@@ -17,6 +17,13 @@
             <div class="card-alert-error hidden">
                 Erro
             </div>
+
+            <a
+                style="margin-bottom: 20px"
+                href="<?= url('/register') ?>"
+            >
+                Não possui cadastro? Cadastre-se
+            </a>
 
             <button type="submit">Entrar</button>
         </form>

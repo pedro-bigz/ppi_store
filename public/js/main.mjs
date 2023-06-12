@@ -1,5 +1,5 @@
 import * as anuncios from './anuncios/index.mjs';
 import * as auth from './auth/index.mjs';
+import { pageResolver } from './helpers/page-resolver.mjs';
 
-// auth.login.load();
-auth.register.load();
+pageResolver({ auth, anuncios }).load();

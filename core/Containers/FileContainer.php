@@ -1,77 +1,43 @@
 <?php namespace Core\Containers;
 
+use Core\Request\RequestFile;
+use Core\Exceptions\NoFileException;
+
 class FileContainer extends ItemContainer
 {
+    private const FILE_PAYLOAD_KEY = 'file';
     private const KEYS = ['error', 'name', 'size', 'tmp_name', 'type'];
 
     public function __construct(array $items = [])
     {
+        parent::__construct();
         $this->init($items);
     }
 
     private function init($files)
     {
         foreach ($files as $key => $file) {
-            parent::setItem($key, $this->convertFileInformation($file));
+            $this->setItem($key, $this->convertFileInformation($file[self::FILE_PAYLOAD_KEY]));
         }
     }
 
-    protected function convertFileInformation()
+    protected function convertFileInformation($file)
     {
-        $file = $this->items;
-
-        if ($file instanceof RequestFile) {
-            return $file;
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw NoFileException::create(
+                "Arquivo não recebido corretamente! (%s)", $file['name'] ?? ($file['full_path'] ?? FILE_PAYLOAD_KEY)
+            );
         }
 
-        $file = $this->adaptFilesArray($file);
-        $keys = array_keys($file);
-
-        sort($keys);
-
-        if (static::KEYS == $keys) {
-            $file = UPLOAD_ERR_NO_FILE != $file['error'] ?
-                new RequestFile($file['tmp_name'], $file['name'], $file['type'], $file['error'], false) : null;
-        } else if (array_keys($keys) === $keys) {
-            $file = array_filter(
-                array_map(function ($item) {
-                    return $item instanceof RequestFile || is_array($item) ?
-                        $this->convertFileInformation($item) : $item;
-                }, $file)
-            );        
-        }
-
-        return $file;
+        return new RequestFile($file['tmp_name'], $file['name'], $file['type'], $file['error'], false);
     }
 
-    protected function adaptFilesArray(array $data)
+    public function moveAll($directory)
     {
-        unset($data['full_path']);
-
-        $filename = $data['name'];
-        $keys = array_keys($data);
-
-        sort($keys);
-
-        if (static::KEYS != $keys || !isset($filename) || !is_array($filename)) {
-            return $data;
+        $uploaded = [];
+        foreach ($this->items as $key => $file) {
+            $uploaded[$key] = $file->moveWithUniqueId($directory);
         }
-
-        $files = $data;
-        foreach (static::KEYS as $key) {
-            unset($files[$key]);
-        }
-
-        foreach ($filename as $key => $name) {
-            $files[$key] = $this->adaptFilesArray([
-                'error' => $data['error'][$key],
-                'name' => $name,
-                'type' => $data['type'][$key],
-                'tmp_name' => $data['tmp_name'][$key],
-                'size' => $data['size'][$key],
-            ]);
-        }
-
-        return $files;
+        return $uploaded;
     }
 }

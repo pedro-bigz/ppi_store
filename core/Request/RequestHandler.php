@@ -1,7 +1,6 @@
 <?php namespace Core\Request;
 
 use Throwable;
-use Core\Request\Request;
 use Core\Debug\DebugBacktrace;
 use Core\Views\ErroPageRender;
 use Core\Exceptions\ApplicationException;

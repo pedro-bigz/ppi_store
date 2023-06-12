@@ -18,6 +18,11 @@ class Anuncios extends Model
         'updated_at'
     ];
 
+    public function getResourceUrl()
+    {
+        return url("/anuncios/{$this->id}");
+    }
+
     public function getCreatedAt()
     {
         return new DateTime($this->created_at);
