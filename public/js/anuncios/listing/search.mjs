@@ -4,7 +4,6 @@ import { form } from '../../helpers/index.mjs'
 const alert = useAlerts();
 
 export const search = (data, collection, loader) => {
-    console.log(data, collection, loader);
     collection.items = [];
     collection.filters = {
         search: data.search,

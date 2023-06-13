@@ -22,6 +22,9 @@
 
             <div class="page-card-body">
                 <div class="advertising-card-container"></div>
+                <div id="loading" class="loading">
+                    Carregando...
+                </div>
             </div>
         </div>
     </div>

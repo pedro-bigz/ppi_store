@@ -1,4 +1,4 @@
-import { ajax, baseUrl } from '../../helpers/index.mjs'
+import { ajax, baseUrl, infinityScrool } from '../../helpers/index.mjs'
 import { advertisingCard } from './advertising-card.mjs';
 import * as search from './search.mjs';
 
@@ -12,6 +12,8 @@ const collection = {
 const pagination = {
     page: 1,
     perPage: 6,
+    numPages: 1,
+    total: 1,
     orderBy: 'created_at',
     orderDirection: 'desc',
 }
@@ -42,16 +44,19 @@ export const listAnuncios = (url, callback, resetPage = false) => {
     Object.assign(options.params, collection.filters)
 
     ajax.get(url, options)
-        .then(response => callback(response?.data?.data))
+        .then(response => callback(response?.data))
         .catch(error => console.log(error))
 }
 
 export const setAnuncios = (anuncios) => {
     pagination.page++;
-    collection.items = [ ...collection.items, ...anuncios ];
+    pagination.numPages = anuncios.numPages;
+    pagination.total = anuncios.total;
+
+    collection.items = [ ...collection.items, ...anuncios?.data ];
     collection.loaded = collection.items.length;
 
-    render(anuncios);
+    render(anuncios?.data);
 }
 
 export const onEditAnuncio = (anuncioId) => {
@@ -86,11 +91,22 @@ export const load = () => {
 
 export const init = () => {
     listAnuncios(baseUrl, setAnuncios);
+    listAnuncios(baseUrl, setAnuncios);
+    infinityScrool(() => {
+        if (pagination.page < pagination.numPages) {
+            listAnuncios(baseUrl, setAnuncios);
+        }
+    })
 }
 
 export const render = (anuncios) => {
     const container = document.querySelector('.advertising-card-container');
+    const loading = container.nextElementSibling;
  
+    if (pagination.page >= pagination.numPages) {
+        loading.classList.add('ended');
+    }
+
     const ensureImageSrc = (src) => {
         return baseImageUrl + '/' + (src || defaultImageSrc);
     }
