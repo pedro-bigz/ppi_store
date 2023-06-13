@@ -1,4 +1,4 @@
-<div class="container book-bg" style="min-height: 100%">
+<div class="container book-bg" style="height: 100%">
     <div class="page-header">
         <h2 class="page-title bright-turquoise"><?= APP_NAME ?></h2>
     </div>

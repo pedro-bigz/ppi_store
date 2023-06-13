@@ -12,7 +12,7 @@ export const login = (url, data) => {
                 })
             }
         })
-        .catch(error => console.log(error))
+        .catch(error => alerts.error(error.message).showFor(5000));
 }
 
 export const load = () => {

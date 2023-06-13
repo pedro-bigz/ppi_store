@@ -4,7 +4,8 @@
             <div class="page-header-bar">
                 <h3 class="page-title yellow"><?= APP_NAME ?></h3>
                 <div>
-                    <a class="advertising-create" href="<?= url('anuncios/create') ?>">Cadatrar Anuncio</a>
+                    <a class="advertising-create d-desktop" href="<?= url('anuncios/create') ?>">Cadatrar Anuncio</a>
+                    <a class="advertising-create d-mobile" href="<?= url('anuncios/create') ?>">Cadatrar</a>
                 </div>
             </div>
 
@@ -20,7 +21,7 @@
                 </button>
             </form>
 
-            <div class="page-card-body">
+            <div class="page-card-body" style="width: 100%">
                 <div class="advertising-card-container"></div>
                 <div id="loading" class="loading">
                     Carregando...

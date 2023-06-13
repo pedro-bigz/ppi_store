@@ -5,20 +5,9 @@
                 <h3 class="page-title yellow"><?= APP_NAME ?></h3>
             </div>
 
-            <!-- <form class="search-bar" action="</?= url() ?>" method="get">
-                <input type="text" name="search" id="search" placeholder="Pesquisar" />
-                <select name="columns" id="columns">
-                    <option value="">*</option>
-                    <option value="titulo">Título</option>
-                    <option value="descricao">Descrição</option>
-                </select>
-                <button>
-                    </?php include __DIR__."/../icons/search.view.php" ?>
-                </button>
-            </form> -->
-
             <div class="page-card-body" style="width: 100%">
                 <div class="details-card">
+                    <?php if (!empty($fotos)): ?>
                     <div class="galery-container">
                         <div class="galery-sidebar">
                             <?php foreach ($fotos as $foto): ?>
@@ -31,10 +20,11 @@
                         <div class="galery-content-preview">
                             <div
                                 class="galery-item"
-                                style="background-image: url('http://ppi.com/images/ozWnsx4RX6PhxfaR0q3e94il6AqJaJcZZhANpTQA.jpg');"
+                                style="background-image: url('<?= url(isset($fotos[0]) ? "{$fotos[0]['folder']}/{$fotos[0]['filename']}" : "images/sem_foto.png") ?>');"
                             ></div>
                         </div>
                     </div>
+                    <?php endif ?>
                     <div class="details-container">
                         <h2><?= $anuncio->titulo ?></h2>
                         <div class="details-price">
