@@ -7,18 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInit1e4ee6f9a087802d02f1c3771394bd97
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '05d09fd5f03dda402161e3c39fdfa8f6' => __DIR__ . '/../..' . '/core/Helpers/functions.php',
         '4cd767e95394fca1156e7b60b50b9424' => __DIR__ . '/../..' . '/app/Helpers/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Component\\VarDumper\\' => 28,
-        ),
         'C' => 
         array (
             'Core\\' => 5,
@@ -30,14 +23,6 @@ class ComposerStaticInit1e4ee6f9a087802d02f1c3771394bd97
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Component\\VarDumper\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/var-dumper',
-        ),
         'Core\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core',

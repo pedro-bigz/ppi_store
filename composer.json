@@ -25,7 +25,6 @@
         ]
     },
     "require": {
-        "php": "^8.0|^8.1",
-        "symfony/var-dumper": "^6.3"
+        "php": "^8.0|^8.1"
     }
 }
