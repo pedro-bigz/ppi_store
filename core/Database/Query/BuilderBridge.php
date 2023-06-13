@@ -249,6 +249,13 @@ class BuilderBridge
 
     public function notifyChanges(int $changes, string $method, $arguments = [])
     {
+        echo PHP_EOL;
+        echo PHP_EOL;
+        echo PHP_EOL;
+        var_dump($arguments);
+        echo PHP_EOL;
+        echo PHP_EOL;
+        echo PHP_EOL;
         if (! is_array($arguments)) {
             $arguments = [$arguments];
         }

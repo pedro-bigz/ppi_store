@@ -147,6 +147,24 @@
     width: 40%;
 }
 
+.advertising-create {
+    text-decoration: none;
+    background-color: #000370;
+    padding: 8px 20px;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.advertising-create:hover {
+    background-color: #000129;
+}
+
+.advertising-create:active {
+    background-color: #09003b;
+}
+
 @media (max-width: 600px) {
     .advertising-card .advertising-card-content {
         width: 100%;

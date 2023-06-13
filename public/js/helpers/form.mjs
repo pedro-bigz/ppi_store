@@ -4,10 +4,6 @@ import { ajax } from './api.mjs';
 
 const alerts = useAlerts();
 
-export const getInput = (selector) => {
-    return form.querySelector('#' + selector);
-}
-
 export const form = (formId, fields, callback) => {
     const form = document.querySelector(formId);
 

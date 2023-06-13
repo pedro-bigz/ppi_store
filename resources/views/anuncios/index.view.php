@@ -8,6 +8,9 @@
                     <a class="advertising-create d-mobile" href="<?= url('anuncios/create') ?>">Cadatrar</a>
                 </div>
             </div>
+            <div style="width: 100%; display: flex; justify-content: flex-end;">
+                <a class="btn-login" href="<?= url('login') ?>">Entrar</a>
+            </div>
 
             <form class="search-bar" action="<?= url() ?>" method="get">
                 <input type="text" name="search" id="search" placeholder="Pesquisar" />

@@ -21,13 +21,6 @@
     <link href="/css/styles.css" rel="stylesheet">
     <script src="/js/pwa.js"></script>
 
-    <!-- </?php dd(empty($bootstrap)) ?> -->
-    <?php if (!empty($bootstrap)): ?>
-        <!-- <link rel="stylesheet" href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css"> -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <?php endif ?>
-
 </head>
 <body>
     <?php if (isset($this->path)) include $this->path; ?>
@@ -42,9 +35,6 @@
             </a>
         </p>
     </div>
-    <?php if (!empty($bootstrap)): ?>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <?php endif ?>
     <script type="module" src="/js/main.mjs"></script>
 </body>
 </html>

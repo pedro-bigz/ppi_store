@@ -90,10 +90,8 @@ export const load = () => {
 }
 
 export const init = () => {
-    listAnuncios(baseUrl, setAnuncios);
-    listAnuncios(baseUrl, setAnuncios);
     infinityScrool(() => {
-        if (pagination.page < pagination.numPages) {
+        if (pagination.page < pagination.numPages || collection.loaded === 0) {
             listAnuncios(baseUrl, setAnuncios);
         }
     })

@@ -40,9 +40,9 @@ html, body {
     padding-bottom: 100px;
 }
 
-.advertising-create {
+.btn-login {
     text-decoration: none;
-    background-color: #000370;
+    background-color: #700000;
     padding: 8px 20px;
     border-radius: 5px;
     color: white;
@@ -50,12 +50,12 @@ html, body {
     line-height: 1.8;
 }
 
-.advertising-create:hover {
-    background-color: #000129;
+.btn-login:hover {
+    background-color: #290000;
 }
 
-.advertising-create:active {
-    background-color: #09003b;
+.btn-login:active {
+    background-color: #3b0000;
 }
 
 .page-card-home .page-header-bar {
@@ -145,8 +145,15 @@ html, body {
     .d-desktop {
         display: none;
     }
+    .btn-login,
     .advertising-create {
         padding: 4px 16px;
+    }
+    .btn-login {
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
     }
 }
 
@@ -165,6 +172,15 @@ html, body {
     }
 }
 
+@media (min-width: 501px) and (max-width: 991px) {
+    .btn-login {
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+}
+
 @media (min-width: 720px) {
     h2.page-title {
         font-size: 9rem;
@@ -177,5 +193,8 @@ html, body {
     }
     .d-desktop {
         display: block;
+    }
+    .btn-login {
+        margin-top: -25px;
     }
 }

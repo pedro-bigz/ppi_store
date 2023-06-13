@@ -289,7 +289,7 @@ abstract class Model
         );
     }
 
-    public function updated($data)
+    public function updated(...$data)
     {
         $this->updated = true;
         foreach ($data as $key => $value) {

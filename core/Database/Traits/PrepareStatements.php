@@ -36,7 +36,7 @@ trait PrepareStatements
             );
 
             $statement->execute();
-            
+
             $this->recordsHaveBeenModified(
                 ($count = $statement->rowCount()) > 0
             );

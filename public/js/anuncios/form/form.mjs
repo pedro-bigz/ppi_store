@@ -85,7 +85,9 @@ export const render = ({ getInput }) => {
     input.type = input.id = input.name = 'file';
     input.classList.add('input-file');
     input.onchange = function() {
-        uploadHandler(this.files[0], getInput)
+        for (let i = 0; i < this.files.length; i++) {
+            uploadHandler(this.files[i], getInput)
+        }
     };
     input.setAttribute('multiple', true);
     input.setAttribute('accept', 'image/png, image/jpg, image/jpeg');
